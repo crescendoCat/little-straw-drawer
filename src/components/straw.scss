@@ -1,8 +1,58 @@
 .straw {
 	.straw-item {
 		transition: background .3s ease-in-out;
+		
 		&:hover {
-			background: #d3d3d3;
+			background: #e9ecef;
 		}
+
+		input {
+			outline: none;
+			border: none;
+			padding: 0;
+			background: transparent;
+		}
+	}
+}
+
+.drawing-result {
+	.drawing-result-item {
+		overflow: hidden;
+	}
+	.item-enter {
+		opacity: 0;
+	}
+	.item-enter::after {
+		display: block;
+		content: '';
+		position: absolute;
+		left: -250px;
+		top: calc(50% - 250px);
+		width: 500px;
+		height: 500px;
+		border-radius: 50%;
+		background-color: rgba(0, 0, 0, 0.4);
+		transform: scale(0);
+	}
+	.item-enter-active {
+		opacity: 1;
+		transition-property: opacity;
+		transition-duration: .5s;
+		transition-timing-function: ease;
+	}
+	.item-enter-active::after {
+		display: block;
+		content: '';
+		position: absolute;
+		left: -250px;
+		top: calc(50% - 250px);
+		width: 500px;
+		height: 500px;
+		border-radius: 50%;
+		background-color: rgba(0, 0, 0, 0);
+		transform: scale(2.5);
+		transition-property: transform, background-color;
+		transition-duration: .5s, .5s;
+		transition-timing-function: ease, ease;
 	}
 }

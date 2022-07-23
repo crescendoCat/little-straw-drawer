@@ -14,3 +14,35 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.btn-icon {
+  color: #004e98;
+  transition: color .3s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    color: #3a6ea5;
+  }
+  svg {
+     vertical-align: baseline;
+  }
+}
+
+.btn-icon.rotate {
+  animation-name: rotate;
+  animation-duration: 1s;
+  animation-iteration-count: 1;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+    animation-timing-function: ease-in; 
+  }
+  50% {
+    transform: rotate(180deg);
+    animation-timing-function: ease-out; 
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
