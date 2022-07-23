@@ -1,0 +1,8 @@
+.straw {
+	.straw-item {
+		transition: background .3s ease-in-out;
+		&:hover {
+			background: #d3d3d3;
+		}
+	}
+}
