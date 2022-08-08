@@ -43,6 +43,9 @@ export const strawSlice = createSlice({
         return item.id === action.payload.id
       })
       state.straws[idxToUpdate].name = action.payload.name
+      if(action.payload.rgb) {
+        state.straws[idxToUpdate].rgb = action.payload.rgb
+      }
     },
     addHistory: (state, action) => {
       state.history.push(action.payload)

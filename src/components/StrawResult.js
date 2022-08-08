@@ -47,7 +47,10 @@ const StrawResult = (props) => {
             </CSSTransition>
             : history.map((value, index, arr) => {
               let idx = arr.length-1-index;
-              value = arr[idx]
+              value = arr[idx].name
+              let c = arr[idx].color
+              const rgb = `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`
+              let style = {backgroundColor: rgb}
               return (
               <CSSTransition
                 key={`straw-drawing-results-item-${idx}`}
@@ -55,7 +58,7 @@ const StrawResult = (props) => {
                 exit={false}
                 classNames="item"
               >
-                <ListGroup.Item className="drawing-result-item">
+                <ListGroup.Item className="drawing-result-item" style={style}>
                   {value}
                 </ListGroup.Item>
               </CSSTransition>

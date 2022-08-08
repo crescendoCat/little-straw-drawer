@@ -21,7 +21,10 @@ function App() {
 
   const draw = () => {
     let randomIndex = Math.floor(Math.random()*straws.length)
-    let picked = straws[randomIndex].name
+    let picked = {
+      name: straws[randomIndex].name,
+      color: straws[randomIndex].rgb ?? {r: 255, g: 255, b: 255, a: 1}
+    }
     dispatch(addHistory(picked))
   }
 

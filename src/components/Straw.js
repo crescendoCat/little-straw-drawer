@@ -2,14 +2,18 @@ import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { addStraw, updateStraw, removeStraw } from '../features/straw/strawSlice';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FaPlus, FaTrashAlt } from "react-icons/fa"
+import { TwitterPicker } from "react-color";
+import { rgbToHsl, hslToRgb } from "../utils";
 
 import "./straw.scss";
 
 export const Straw = (props) => {
   const [isEdit, setIsEdit] = useState(false);
+  const [displayColorPicker, setDisplayColorPicker] = useState(false)
   const dispatch = useDispatch()
+  const inputRef = useRef(null);
   const handleOnChange = event => {
     const { value } = event.target;
     dispatch(updateStraw({id: props.straw.id, name: value}))
@@ -21,35 +25,108 @@ export const Straw = (props) => {
     }
   }
 
+  const handleClose = event => {
+    setDisplayColorPicker(false)
+  }
+
+  const handleColorChange = (color, event) => {
+    if(event.type === "click") {
+      event.stopPropagation();
+    }
+    dispatch(updateStraw({...props.straw, rgb: color.rgb}))
+  }
+
+  const handleColorChangeComplete = (color, event) => {
+    setDisplayColorPicker(false);
+    dispatch(updateStraw({...props.straw, rgb: color.rgb}))
+  }
+
+  const handlePick = event => {
+    event.stopPropagation();
+    setDisplayColorPicker(true);
+  }
+
   useEffect(() => {
+    if(isEdit === true) {
+      if(inputRef.current !== null) {
+        inputRef.current.focus()
+      }
+    }
     if(isEdit === false) {
       if(props.straw.name.trim() === "") {
         dispatch(removeStraw({id: props.straw.id}))
       }
     }
   }, [isEdit])
+  const popover = {
+    position: 'absolute',
+    zIndex: '2',
+    right:  '-12px',
+    top:   'calc(1.2rem + 10px)'
+  }
+  const cover = {
+    position: 'fixed',
+    top: '0px',
+    right: '0px',
+    bottom: '0px',
+    left: '0px',
+  }
+
+  const c = props.straw?.rgb ?? {r: 255, g: 255, b:255, a: 1};
+  const rgb = `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`
+  let [h, s, l] = rgbToHsl(c.r, c.g, c.b);
+  let light = false;
+  if(l <= 0.3) light = true;
+  l -= 0.32
+  if(l <= 0) l = 1-l;
+  const [r, g, b] = hslToRgb(h, s, l);
+  const rgbLine = `rgba(${r}, ${g}, ${b}, ${c.a})`
+
+
+  const straw = {
+    background: rgb
+  }
 
   return (
-    <ListGroup.Item className="straw-item d-flex" 
-      onClick={() => setIsEdit(true)}
-      >
+    <ListGroup.Item className={`straw-item d-flex ${light? "light" : ""}`}
+      style={straw}
+      onClick={(event) => {
+        console.log(event.target)
+        setIsEdit(true)
+      }}>
       { isEdit
         ? <input type="text" value={props.straw.name}
-            autoFocus
+            ref={inputRef}
             onChange={handleOnChange}
             onKeyDown={handleKeyDown}
             onBlur={() => {setIsEdit(false)}}
             ></input>
         : props.straw.name
       }
-      <div className="btn-icon ms-auto"
+      <div className="btn-color-picker  ms-auto">
+        <div className="btn-color" onClick={handlePick} 
+          style={{backgroundColor: rgb, borderColor: rgbLine}}>
+         
+        </div>
+        { displayColorPicker 
+          ? <div style={ popover } onClick={e => e.stopPropagation()}>
+              <div style={ cover } onClick={ handleClose }/>
+              <TwitterPicker 
+                triangle="top-right" 
+                onChange={ handleColorChange }
+                onChangeComplete={ handleColorChangeComplete }/>
+            </div> 
+          : null
+        }
+      </div>
+      <div className="btn-icon"
         onClick={(e)=> {
           dispatch(removeStraw({id: props.straw.id}))
           e.preventDefault();
           e.stopPropagation();
         }}
       >
-        <FaTrashAlt />
+        <FaTrashAlt style={{color: rgbLine}}/>
       </div>
     </ListGroup.Item>
   )
