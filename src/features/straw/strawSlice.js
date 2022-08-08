@@ -13,7 +13,9 @@ export const strawSlice = createSlice({
       name: "Straw"
     }], // array of Straw
     history: [],
-    strawCount: 3
+    presets: [],
+    strawCount: 3,
+    presetCount: 0
   },
   reducers: {
     addStraw: (state, action) => {
@@ -45,12 +47,34 @@ export const strawSlice = createSlice({
     addHistory: (state, action) => {
       state.history.push(action.payload)
     },
-    clearHistory: (state, action) => {
+    clearHistory: (state) => {
       state.history = [];
+    },
+    savePreset: (state) => {
+      if(state.straws.length <= 0) return;
+      state.presets.push({
+        id: state.presetCount,
+        value: state.straws
+      });
+      state.presetCount += 1;
+    },
+    loadPreset: (state, action) => {
+      let idxToLoad = state.presets.findIndex(item => {
+        return item.id === action.payload.id
+      });
+      state.straws = state.presets[idxToLoad].value;
+    },
+    removePreset: (state, action) => {
+      state.presets = state.presets.filter(item => {
+        return item.id !== action.payload.id
+      });
     }
   }
 })
 
-export const { addStraw, removeStraw, updateStraw, addHistory, clearHistory } = strawSlice.actions
+export const { 
+  addStraw, removeStraw, updateStraw, 
+  addHistory, clearHistory,
+  loadPreset, savePreset, removePreset } = strawSlice.actions
 
 export default strawSlice.reducer

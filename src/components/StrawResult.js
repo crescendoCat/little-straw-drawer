@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FaRedo } from 'react-icons/fa';
+import { FaTrashAlt } from 'react-icons/fa';
 import { CSSTransitionGroup } from 'react-transition-group';
 import { clearHistory } from '../features/straw/strawSlice';
 import {
@@ -27,7 +27,7 @@ const StrawResult = (props) => {
             onClick={() => {setIsRotate(true); dispatch(clearHistory())}}
             onAnimationEnd={() =>{setIsRotate(false)}}
           >
-          <FaRedo />
+          <FaTrashAlt />
         </div>
       </Card.Header>
       
@@ -43,7 +43,7 @@ const StrawResult = (props) => {
                 exit={false}
                 classNames="item"
               >
-              <ListGroup.Item>No results here. Hit Draw above!</ListGroup.Item>
+              <ListGroup.Item style={{color: "rgb(110 110 110)"}}>No results here. Hit Draw above!</ListGroup.Item>
             </CSSTransition>
             : history.map((value, index, arr) => {
               let idx = arr.length-1-index;
