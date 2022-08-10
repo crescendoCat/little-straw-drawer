@@ -31,6 +31,11 @@ function App() {
   return (
     <Container className="p-5">
       <Row className="justify-content-center">
+        <Col className="text-center">
+          <h1>Mi Mi Draw Machine</h1>
+        </Col>
+      </Row>
+      <Row className="justify-content-center">
         <Col xs={12} lg={6}>
           <StrawPreset />
         </Col>
