@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { addStraw, updateStraw, removeStraw } from '../features/straw/strawSlice';
 import { useState, useEffect, useRef } from 'react';
-import { FaPlus, FaTrashAlt } from "react-icons/fa"
+import { FaPlus, FaTrashAlt, FaPalette } from "react-icons/fa"
 import { TwitterPicker } from "react-color";
 import { rgbToHsl, hslToRgb } from "../utils";
 
@@ -101,12 +101,12 @@ export const Straw = (props) => {
             onKeyDown={handleKeyDown}
             onBlur={() => {setIsEdit(false)}}
             ></input>
-        : props.straw.name
+        : <div>{props.straw.name}</div>
       }
       <div className="btn-color-picker  ms-auto">
-        <div className="btn-color" onClick={handlePick} 
-          style={{backgroundColor: rgb, borderColor: rgbLine}}>
-         
+        <div className="btn-color btn-icon" onClick={handlePick} 
+          style={{color: rgbLine}}>
+          <FaPalette />
         </div>
         { displayColorPicker 
           ? <div style={ popover } onClick={e => e.stopPropagation()}>
@@ -119,7 +119,7 @@ export const Straw = (props) => {
           : null
         }
       </div>
-      <div className="btn-icon"
+      <div className="btn-icon btn-trash"
         onClick={(e)=> {
           dispatch(removeStraw({id: props.straw.id}))
           e.preventDefault();

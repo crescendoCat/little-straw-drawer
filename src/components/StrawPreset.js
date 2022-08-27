@@ -1,17 +1,20 @@
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import { useSelector, useDispatch } from 'react-redux';
 import { savePreset, loadPreset, removePreset } from '../features/straw/strawSlice';
-import { FaTrashAlt } from 'react-icons/fa';
+import { startTutorial } from '../features/tutorial/tutorialSlice';
+import { FaTrashAlt, FaInfoCircle } from 'react-icons/fa';
 function StrawPreset(props) {
   const maxItemLength = props.maxLength ? props.maxLength : 20;
   const presets = useSelector((state) => state.straw.presets);
   const dispatch = useDispatch();
   return (
     <div className="d-flex">
-      <Button onClick={() => {dispatch(savePreset())}}>Save as Preset</Button>
+      <Button id="btn-save-as-preset" onClick={() => {dispatch(savePreset())}}>Save as Preset</Button>
       <Dropdown>
-        <Dropdown.Toggle variant="success">
+        <Dropdown.Toggle variant="success" id="btn-load-from-presets">
           Load from Presets
         </Dropdown.Toggle>
 
@@ -45,6 +48,20 @@ function StrawPreset(props) {
           }
         </Dropdown.Menu>
       </Dropdown>
+      <OverlayTrigger
+        placement="bottom"
+        overlay={
+          <Tooltip>
+            Start tutorial
+          </Tooltip>
+        }
+        >
+        <div className="btn-icon ms-3" style={{alignSelf: "center"}} onClick={() => {
+          dispatch(startTutorial())
+        }}>
+          <FaInfoCircle />
+        </div>
+      </OverlayTrigger>
     </div>
   )
 }

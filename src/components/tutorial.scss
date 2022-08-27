@@ -1,0 +1,36 @@
+.tutorial {
+	position: fixed;
+	width: 100vw;
+	height: 100vw;
+	top: 0;
+	left: 0;
+	.controls {
+		position: fixed;
+		bottom: 10%;
+		color: white;
+		.control-btn {
+			color: inherit;
+			border-radius: 50%;
+			width: 2rem;
+			height: 2rem;
+			display: flex;
+			margin: auto;
+			justify-content: center;
+			align-items: center;
+			svg {
+				display: block;
+			}
+			svg * {
+
+				stroke:  currentColor;
+			}
+			svg rect{
+				transition: x .2s, y .2s;
+			}
+			&:hover {
+				background: #0005;
+			}
+			transition: background .2s ease-in;
+		}
+	}
+}

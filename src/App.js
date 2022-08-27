@@ -12,15 +12,16 @@ import StrawPreset from './components/StrawPreset'
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addStraw, addHistory } from './features/straw/strawSlice';
-
+import Tutorial from "./components/Tutorial"
 
 function App() {
   const dispatch = useDispatch();
   const straws = useSelector((state) => state.straw.straws);
-
+  const showTutorial = useSelector(state => state.tutorial.showTutorial)
 
   const draw = () => {
-    let randomIndex = Math.floor(Math.random()*straws.length)
+    let rnd = crypto.getRandomValues(new Uint32Array(straws.length))
+    let randomIndex = rnd.indexOf(Math.max(...rnd))
     let picked = {
       name: straws[randomIndex].name,
       color: straws[randomIndex].rgb ?? {r: 255, g: 255, b: 255, a: 1}
@@ -29,6 +30,7 @@ function App() {
   }
 
   return (
+  <>
     <Container className="p-5">
       <Row className="justify-content-center">
         <Col className="text-center">
@@ -47,7 +49,7 @@ function App() {
       </Row>
       <Row className="justify-content-center mt-5">
         <Col xs={12} lg={6} className="d-flex justify-content-center">
-          <Button onClick={draw}>抽籤</Button>
+          <Button onClick={draw} id="btn-draw">抽籤</Button>
         </Col>
       </Row>
       <Row className="justify-content-center mt-5">
@@ -56,7 +58,8 @@ function App() {
         </Col>
       </Row>
     </Container>
-
+    <Tutorial active={showTutorial}/>
+  </>
   );
 }
 

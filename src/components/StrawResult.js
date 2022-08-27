@@ -20,10 +20,10 @@ const StrawResult = (props) => {
 
 
   return (
-    <Card>
+    <Card id="drawing-result-card">
       <Card.Header className="d-flex">
         <a>Results</a>
-        <div className={`btn-icon ms-auto ${isRotate ? "rotate" : ""}`} style={{fontSize: "1.2rem"}}
+        <div id="btn-clear-results" className={`btn-icon ms-auto ${isRotate ? "rotate" : ""}`} style={{fontSize: "1.2rem"}}
             onClick={() => {setIsRotate(true); dispatch(clearHistory())}}
             onAnimationEnd={() =>{setIsRotate(false)}}
           >
