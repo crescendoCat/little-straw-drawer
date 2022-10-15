@@ -6,63 +6,66 @@ import { useSelector, useDispatch } from 'react-redux';
 import { savePreset, loadPreset, removePreset } from '../features/straw/strawSlice';
 import { startTutorial } from '../features/tutorial/tutorialSlice';
 import { FaTrashAlt, FaInfoCircle } from 'react-icons/fa';
+import {
+  Container,
+  Row, Col
+} from "react-bootstrap";
 function StrawPreset(props) {
   const maxItemLength = props.maxLength ? props.maxLength : 20;
   const presets = useSelector((state) => state.straw.presets);
   const dispatch = useDispatch();
   return (
-    <div className="d-flex">
-      <Button id="btn-save-as-preset" onClick={() => {dispatch(savePreset())}}>Save as Preset</Button>
-      <Dropdown>
-        <Dropdown.Toggle variant="success" id="btn-load-from-presets">
-          Load from Presets
-        </Dropdown.Toggle>
+    <Container fluid>
+      <Row className="d-flex justify-content-center justify-content-sm-start">
+        <Col xs="auto" className="px-1">
+          <Button id="btn-save-as-preset" onClick={() => {dispatch(savePreset())}}>Save as Preset</Button>
+        </Col>
+        <Col xs="auto" className="px-1">
+          <Dropdown>
+            <Dropdown.Toggle variant="success" id="btn-load-from-presets">
+              Load from Presets
+            </Dropdown.Toggle>
 
-        <Dropdown.Menu>
-          {
-            presets.length <= 0
-            ? <Dropdown.Item disabled>Oops! nothing here...click "Save as Preset" to add a preset</Dropdown.Item>
-            : presets.map((preset, index) => {
-              
-              let itemText = preset.value.map(i => i.name).join(", ");
-              if(itemText.length >= maxItemLength) {
-                itemText = itemText.slice(0, maxItemLength-3) + "..."
+            <Dropdown.Menu>
+              {
+                presets.length <= 0
+                ? <Dropdown.Item disabled>Oops! nothing here...click "Save as Preset" to add a preset</Dropdown.Item>
+                : presets.map((preset, index) => {
+                  
+                  let itemText = preset.value.map(i => i.name).join(", ");
+                  if(itemText.length >= maxItemLength) {
+                    itemText = itemText.slice(0, maxItemLength-3) + "..."
+                  }
+                  return (
+                    <Dropdown.Item 
+                      className="d-flex" key={`preset-dropdown-item-${index}`}
+                      onClick={()=>{dispatch(loadPreset({id: preset.id}))}}>
+                      <div className="me-auto">{itemText}</div>
+                      <div className="btn-icon ms-2"
+                        onClick={(e)=> {
+                          dispatch(removePreset({id: preset.id}))
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      >
+                        <FaTrashAlt />
+                      </div>
+                    </Dropdown.Item>
+                  )
+                })
               }
-              return (
-                <Dropdown.Item 
-                  className="d-flex" key={`preset-dropdown-item-${index}`}
-                  onClick={()=>{dispatch(loadPreset({id: preset.id}))}}>
-                  <div className="me-auto">{itemText}</div>
-                  <div className="btn-icon ms-2"
-                    onClick={(e)=> {
-                      dispatch(removePreset({id: preset.id}))
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    <FaTrashAlt />
-                  </div>
-                </Dropdown.Item>
-              )
-            })
-          }
-        </Dropdown.Menu>
-      </Dropdown>
-      <OverlayTrigger
-        placement="bottom"
-        overlay={
-          <Tooltip>
-            Start tutorial
-          </Tooltip>
-        }
-        >
-        <div className="btn-icon ms-3" style={{alignSelf: "center"}} onClick={() => {
-          dispatch(startTutorial())
-        }}>
-          <FaInfoCircle />
-        </div>
-      </OverlayTrigger>
-    </div>
+            </Dropdown.Menu>
+          </Dropdown>
+        </Col>
+        <Col xs="auto" className="px-1">
+          <Button variant="link" onClick={() => {
+            dispatch(startTutorial())
+          }}>
+            Help
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   )
 }
 
