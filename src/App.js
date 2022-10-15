@@ -58,7 +58,7 @@ function App() {
         </Col>
         <Col xs={12} sm={"auto"} lg={3} xl={6} className="d-flex justify-content-end">
           <div className="d-none d-xl-block me-2">Share this app:</div>
-          <Share title={"Mi Mi Draw Machine"} text={"Share us"}/>
+          <Share title={"Mi Mi Draw Machine"} text={"Mi Mi Draw Machine: wanna draw some straws? A simple, easy and fast solution you should try!\n"}/>
           <FacebookShareButton 
             url={shareLink}
             quote={"Mi Mi Draw Machine"}
