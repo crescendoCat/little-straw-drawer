@@ -1,3 +1,8 @@
+import { 
+    useState, 
+    useEffect
+} from 'react';
+
 /**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
@@ -12,7 +17,7 @@
 export function hslToRgb(h, s, l){
     var r, g, b;
 
-    if(s == 0){
+    if(s === 0){
         r = g = b = l; // achromatic
     }else{
         var hue2rgb = function hue2rgb(p, q, t){
@@ -50,7 +55,7 @@ export function rgbToHsl(r, g, b){
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
     var h, s, l = (max + min) / 2;
 
-    if(max == min){
+    if(max === min){
         h = s = 0; // achromatic
     }else{
         var d = max - min;
@@ -59,9 +64,37 @@ export function rgbToHsl(r, g, b){
             case r: h = (g - b) / d + (g < b ? 6 : 0); break;
             case g: h = (b - r) / d + 2; break;
             case b: h = (r - g) / d + 4; break;
+            default: h = 0;
         }
         h /= 6;
     }
 
     return [h, s, l];
+}
+
+// Hook
+export function useWindowSize() {
+  // Initialize state with undefined width/height so server and client renders match
+  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
+  const [windowSize, setWindowSize] = useState({
+    width: undefined,
+    height: undefined,
+  });
+  useEffect(() => {
+    // Handler to call on window resize
+    function handleResize() {
+      // Set window width/height to state
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+    // Call handler right away so state gets updated with initial window size
+    handleResize();
+    // Remove event listener on cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty array ensures that effect is only run on mount
+  return windowSize;
 }

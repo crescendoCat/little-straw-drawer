@@ -3,15 +3,12 @@ import {
   Row,
   Col,
   Button,
-  Card,
-  ListGroup
 } from 'react-bootstrap';
 import StrawList from './components/Straw';
 import StrawResult from './components/StrawResult'
-import StrawPreset from './components/StrawPreset'
-import { useEffect } from 'react';
+import Menu from './components/Menu'
 import { useDispatch, useSelector } from 'react-redux';
-import { addStraw, addHistory } from './features/straw/strawSlice';
+import { addHistory } from './features/straw/strawSlice';
 import Tutorial from "./components/Tutorial"
 
 import Share from './components/Share';
@@ -78,7 +75,7 @@ function App() {
       </Row>
       <Row className="justify-content-center">
         <Col xs={12} lg={6}>
-          <StrawPreset />
+          <Menu />
         </Col>
       </Row>
       <Row className="justify-content-center mt-2">

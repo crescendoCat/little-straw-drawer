@@ -1,5 +1,9 @@
 import "./tutorial.scss"
-import { useState, useEffect } from "react";
+import { 
+	useState, 
+	useEffect,
+	useCallback
+} from "react";
 import { GrNext, GrPrevious } from "react-icons/gr";
 import {
 	Container,
@@ -43,6 +47,49 @@ function TutorialInner(props) {
 	let end = state.currentPosition + 1 === state.tutorials.length 
 	const { opacity } = useSpring({opacity: end ? 1: 0})
 
+	const setToEl = useCallback((el) => {
+		let rect = el.getBoundingClientRect()
+		setRect({
+			x: rect.left - padding,
+			y: rect.top - padding,
+			w: rect.right - rect.left + padding * 2,
+			h: rect.bottom - rect.top + padding * 2
+		})
+	}, [setRect]);
+
+	const setToId = useCallback((id) => {
+		let el = document.getElementById(id)
+		if(el) {
+			setToEl(el)
+		}
+	}, [setToEl])
+
+	const setToSelector = useCallback((selector) => {
+		let el = document.querySelector(selector)
+		if(el) {
+			setToEl(el)
+		}
+	}, [setToEl])
+
+	const setToDisplay = useCallback((display) => {
+		if(display.id) {
+			setToId(display.id)
+		} else if(display.selector) {
+			setToSelector(display.selector)
+		}
+	}, [setToId, setToSelector])
+
+	const handleResize = useCallback(() => {
+		setToDisplay(state?.display)
+		setDimensions({
+      height: window.innerHeight,
+      width: window.innerWidth
+    })
+	}, [state?.display, setToDisplay])
+
+	const handleScroll = useCallback(() => {
+		
+	}, [])
 
 	useEffect(() => {
 				
@@ -52,58 +99,12 @@ function TutorialInner(props) {
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('scroll', handleScroll)
 		}
-	}, [])
+	}, [handleResize, handleScroll])
 
 	useEffect(() => {
+		console.log("now display:", state?.display);
 		setToDisplay(state?.display)
-	}, [state])
-
-	const setToDisplay = (display) => {
-		if(display.id) {
-			setToId(display.id)
-		} else if(display.selector) {
-			setToSelector(display.selector)
-		}
-	}
-
-	const setToId = (id) => {
-		let el = document.getElementById(id)
-		if(el) {
-			setToEl(el)
-		}
-	}
-
-	const setToSelector = (selector) => {
-		let el = document.querySelector(selector)
-		if(el) {
-			setToEl(el)
-		}
-	}
-
-	const setToEl = (el) => {
-		let rect = el.getBoundingClientRect()
-		setRect({
-			x: rect.left - padding,
-			y: rect.top - padding,
-			w: rect.right - rect.left + padding * 2,
-			h: rect.bottom - rect.top + padding * 2
-		})
-	}
-
-
-	const handleResize = () => {
-		setToDisplay(state?.display)
-		setDimensions({
-      height: window.innerHeight,
-      width: window.innerWidth
-    })
-	}
-
-	const handleScroll = () => {
-		
-	}
-
-
+	}, [state, setToDisplay])
 
 	const handleClick = (e) => {
 		console.log("click")
@@ -130,8 +131,8 @@ function TutorialInner(props) {
 			<div className="controls w-100">
 				<Container>
 					<Row className="text-center justify-content-center">
-						<Col>
-							<span className="px-2 py-1" style={{backgroundColor: "#0008", borderRadius: "10px"}}>{state?.display?.description}</span>
+						<Col xs="auto">
+							<div className="px-2 py-1" style={{backgroundColor: "#0008", borderRadius: "10px"}}>{state?.display?.description}</div>
 						</Col>
 					</Row>
 					<Row className="mt-2 justify-content-center text-center">
@@ -164,6 +165,7 @@ function TutorialInner(props) {
 	)
 }
 
+// eslint-disable-next-line no-func-assign
 TutorialInner = animated(TutorialInner)
 
 export default function Tutorial(props) {

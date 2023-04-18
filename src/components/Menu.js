@@ -1,29 +1,44 @@
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
-import { useSelector, useDispatch } from 'react-redux';
-import { savePreset, loadPreset, removePreset } from '../features/straw/strawSlice';
+import { 
+  useSelector,
+  useDispatch
+} from 'react-redux';
+import { 
+  savePreset, 
+  loadPreset, 
+  removePreset
+} from '../features/straw/strawSlice';
 import { startTutorial } from '../features/tutorial/tutorialSlice';
-import { FaTrashAlt, FaInfoCircle } from 'react-icons/fa';
+import { 
+  FaTrashAlt, 
+} from 'react-icons/fa';
 import {
   Container,
-  Row, Col
+  Row, 
+  Col
 } from "react-bootstrap";
-function StrawPreset(props) {
+import {
+  useWindowSize
+} from "../utils";
+
+function Menu(props) {
   const maxItemLength = props.maxLength ? props.maxLength : 20;
   const presets = useSelector((state) => state.straw.presets);
   const dispatch = useDispatch();
+  const winSize = useWindowSize();
   return (
     <Container fluid>
       <Row className="d-flex justify-content-center justify-content-sm-start">
         <Col xs="auto" className="px-1">
-          <Button id="btn-save-as-preset" onClick={() => {dispatch(savePreset())}}>Save as Preset</Button>
+          <Button id="btn-save-as-preset" onClick={() => {dispatch(savePreset())}}>
+            { winSize.width < 576 ? "Save" : "Save as Preset" }
+          </Button>
         </Col>
         <Col xs="auto" className="px-1">
           <Dropdown>
             <Dropdown.Toggle variant="success" id="btn-load-from-presets">
-              Load from Presets
+              { winSize.width < 576 ? "Load" : "Load from Presets" }
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
@@ -69,4 +84,4 @@ function StrawPreset(props) {
   )
 }
 
-export default StrawPreset
+export default Menu
