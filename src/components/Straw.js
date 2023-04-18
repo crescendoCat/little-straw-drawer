@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import ListGroup from 'react-bootstrap/ListGroup'
-import { addStraw, updateStraw, removeStraw } from '../features/straw/strawSlice';
+import { addStraw, addStraws, updateStraw, removeStraw } from '../features/straw/strawSlice';
 import { useState, useEffect, useRef } from 'react';
 import { FaPlus, FaTrashAlt, FaPalette } from "react-icons/fa"
 import { TwitterPicker } from "react-color";
-import { rgbToHsl, hslToRgb } from "../utils";
+import { rgbToHsl, hslToRgb, hexStr2RgbObj } from "../utils";
 
 import "./straw.scss";
 
@@ -23,6 +23,31 @@ export const Straw = (props) => {
     if (event.key === "Enter") {
       setIsEdit(false)
     }
+  }
+
+  const randomColorObj = () => {
+    let array = ['#FF6900', '#FCB900', '#7BDCB5', '#00D084', '#8ED1FC', '#0693E3', '#ABB8C3', '#EB144C', '#F78DA7', '#9900EF']
+    let color = array[Math.floor(Math.random() * array.length)];
+    return hexStr2RgbObj(color);
+  }
+
+  const handlePaste = (e) => {
+    let lines = e.clipboardData.getData('text');
+    e.preventDefault()
+    let newStraws = []
+    lines.split('\n').forEach(line => {
+      if(line.trim() !== "") {
+        newStraws.push({
+          name: line.trim(),
+          rgb: randomColorObj()
+        })
+      }
+    })
+    console.log(newStraws);
+    dispatch(addStraws({
+      straws: [...newStraws],
+      afterIndex: props.straw.id
+    }));
   }
 
   const handleClose = event => {
@@ -71,7 +96,6 @@ export const Straw = (props) => {
     bottom: '0px',
     left: '0px',
   }
-
   const c = props.straw?.rgb ?? {r: 255, g: 255, b:255, a: 1};
   const rgb = `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`
   let [h, s, l] = rgbToHsl(c.r, c.g, c.b);
@@ -101,6 +125,7 @@ export const Straw = (props) => {
         ? <input type="text" value={props.straw.name}
             ref={inputRef}
             onChange={handleOnChange}
+            onPaste={handlePaste}
             onKeyDown={handleKeyDown}
             onBlur={() => {setIsEdit(false)}}
             ></input>
@@ -149,9 +174,31 @@ const StrawList = (props) => {
 
   const addNewStraw = () => {
     if(newStrawName.trim() !== "") {
-      dispatch(addStraw(newStrawName.trim()));
+      dispatch(addStraw({
+          name: newStrawName.trim(),
+          rgb: randomColorObj()
+        }));
       setNewStrawName("");    
     }
+  }
+
+  const randomColorObj = () => {
+    let array = ['#FF6900', '#FCB900', '#7BDCB5', '#00D084', '#8ED1FC', '#0693E3', '#ABB8C3', '#EB144C', '#F78DA7', '#9900EF']
+    let color = array[Math.floor(Math.random() * array.length)];
+    return hexStr2RgbObj(color);
+  }
+
+  const handlePaste = (e) => {
+    let lines = e.clipboardData.getData('text');
+    lines.split('\n').forEach(line => {
+      if(line.trim() !== "") {
+        dispatch(addStraw({
+          name: line.trim(),
+          rgb: randomColorObj()
+        }));
+      }
+    })
+    setNewStrawName("");    
   }
 
   const handleKeyDown = (e) => {
@@ -175,6 +222,7 @@ const StrawList = (props) => {
         <input type="text" value={newStrawName}
           onChange = {(e) => {setNewStrawName(e.target.value)}}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
           placeholder="加新的籤"
           style={{flex: 1}}
           />

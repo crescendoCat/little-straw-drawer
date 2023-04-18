@@ -11,10 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { 
   addHistory,
   updateStraw,
-  clearHistory
+  clearHistory,
+  setIsPlayingAnimation
 } from './features/straw/strawSlice';
 import Tutorial from "./components/Tutorial";
 import Settings from "./components/Settings";
+import Animation from "./components/Animation";
 
 import Share from './components/Share';
 
@@ -37,6 +39,9 @@ function App() {
   const showTutorial = useSelector(state => state.tutorial.showTutorial)
   const shareLink = window.location.href;
   const draw = () => {
+    if(settings.showAnimation) {
+      dispatch(setIsPlayingAnimation(true));
+    }
     let drawableStraws = [...straws];
     let rndNum = drawableStraws.length;
     if(!settings.isRepeatable) {
@@ -51,24 +56,22 @@ function App() {
       }
     }
     
-
-    
-
     let rnd = crypto.getRandomValues(new Uint32Array(rndNum))
     let randomIndex = rnd.indexOf(Math.max(...rnd))
     let picked = {
+      id: drawableStraws[randomIndex].id,
       name: drawableStraws[randomIndex].name,
       color: drawableStraws[randomIndex].rgb ?? {r: 255, g: 255, b: 255, a: 1}
     }
     if(!settings.isRepeatable) {
-      console.log("picked:", {
-        id: drawableStraws[randomIndex].id,
-        isPicked: true
-      })
-      dispatch(updateStraw({
-        id: drawableStraws[randomIndex].id,
-        isPicked: true
-      }))
+      //如果不需要顯示動畫，則直接將選到的標為已選
+      if(!settings.showAnimation) {
+        dispatch(updateStraw({
+          id: drawableStraws[randomIndex].id,
+          isPicked: true
+        }))
+      }
+      //如果需要顯示，則交給Animation更新straws
     }
     dispatch(addHistory(picked))
   }
@@ -128,6 +131,7 @@ function App() {
       </Row>
     </Container>
     <Settings />
+    <Animation />
     <Tutorial active={showTutorial === "show" ? true: false}/>
   
   </>

@@ -5,7 +5,8 @@ export const settingsSlice = createSlice({
     isRepeatable: true,
     showAnimation: true,
     animationType: "default",
-    displaySetting: false
+    displaySetting: false,
+    animationTimeout: 500
   },
   reducers: {
     openSettings: (state) => {
@@ -52,6 +53,9 @@ export const settingsSlice = createSlice({
      */
     setAnimationType: (state, action) => {
       state.animationType = action.payload
+    },
+    setAnimationTimeout: (state, action) => {
+      state.animationTimeout = parseInt(action.payload)
     }
   }
 })
@@ -62,7 +66,8 @@ export const {
   setDisplaySettings,
   setRepeatable,
   setShowAnimation,
-  setAnimationType 
+  setAnimationType,
+  setAnimationTimeout
 } = settingsSlice.actions
 
 export default settingsSlice.reducer

@@ -5,7 +5,8 @@ import {
 import {
 	Modal,
 	Form,
-  Button
+  Button,
+  InputGroup
 } from "react-bootstrap";
 
 import {
@@ -16,7 +17,8 @@ import {
 import {
   closeSettings,
   setRepeatable,
-  setShowAnimation
+  setShowAnimation,
+  setAnimationTimeout
 } from "../features/settings/slice";
 
 import {
@@ -26,7 +28,6 @@ import {
 function Settings(props) {
   const dispatch = useDispatch();
   const settings = useSelector(state => state.settings);
-  console.log("settings:", settings);
   const _closeSettings = useCallback(() => {
     dispatch(closeSettings())
   }, [dispatch])
@@ -34,10 +35,10 @@ function Settings(props) {
   return (
     <Modal show={settings.displaySetting} onHide={_closeSettings}>
       <Modal.Header closeButton>
-        <Modal.Title>Modal heading</Modal.Title>
+        <Modal.Title>Settings</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={(e) => {e.preventDefault()}}>
           <Form.Group className="mb-3">
             <Form.Check
               type="checkbox"
@@ -62,6 +63,19 @@ function Settings(props) {
               }}
             />
           </Form.Group>
+          <Form.Label>Animation Time: </Form.Label>
+          <InputGroup className="mb-3">
+            <Form.Control 
+              type="number"
+              aria-label="1500" 
+              onChange={e => {
+                console.log(e.target.value)
+                dispatch(setAnimationTimeout(e.target.value))
+              }}
+              value={settings.animationTimeout}
+            />
+            <InputGroup.Text>millisecond</InputGroup.Text>
+          </InputGroup>
         </Form>
       </Modal.Body>
       <Modal.Footer>

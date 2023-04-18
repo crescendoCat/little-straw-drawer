@@ -71,6 +71,33 @@ export function rgbToHsl(r, g, b){
 
     return [h, s, l];
 }
+/**
+ * transform rgb object to #000000 style string
+ * @param  {object} rgb {r: number, g:number, b:number}
+ * @return {[type]}     [description]
+ */
+export function rgbObj2HexStr({r, g, b}) {
+    function checkRange(n) {
+        if(n < 0 || n > 255) {
+            throw new Error("Number out of RGB color range. A RGB value should between 0~255.");
+        }
+    }
+    function toFixedHex(n) {
+        return ('0000' + n.toString(16).toUpperCase()).slice(-2);
+    }
+    [r, g, b].map(checkRange);
+    return `#${toFixedHex(r)}${toFixedHex(g)}${toFixedHex(b)}`
+}
+
+export function hexStr2RgbObj(str) {
+    let r = parseInt(str.substr(1, 2), 16),
+        g = parseInt(str.substr(3, 2), 16),
+        b = parseInt(str.substr(5, 2), 16),
+        a = str.length === 9 ? parseInt(str.substr(7, 2), 16) : 1;
+    return {
+        r, g, b, a
+    }
+}
 
 // Hook
 export function useWindowSize() {

@@ -15,15 +15,68 @@ export const strawSlice = createSlice({
     history: [],
     presets: [],
     strawCount: 3,
-    presetCount: 0
+    presetCount: 0,
+    isPlayingAnimation: false
   },
   reducers: {
     addStraw: (state, action) => {
-      state.straws.push({
-        id: state.strawCount,
-        name: action.payload
-      });
+      if(typeof action.payload === "string") {
+        state.straws.push({
+          id: state.strawCount,
+          name: action.payload
+        });
+      }
+      if(typeof action.payload === "object") {
+        console.log("new straw", action.payload)
+        let newStraw = {id: state.strawCount, name: ""}
+        if(typeof action.payload.name === "string") 
+          newStraw.name = action.payload.name
+
+        if(action.payload.rgb) 
+          newStraw.rgb = action.payload.rgb;
+
+        state.straws.push(newStraw);
+
+      }
       state.strawCount += 1;
+    },
+    addStraws: (state, action) => {
+      if(!Array.isArray(action.payload.straws)) {
+        console.error("straws is not an array");
+        return;
+      }
+      if(action.payload.straws.length <= 0) {
+        console.error("straws is an empty array");
+        return 
+      }
+      if(typeof action.payload.afterIndex !== "number") {
+        console.error("afterIndex is not a number");
+
+        return;
+      }
+      let startIndex = state.straws.findIndex(s => s.id === action.payload.afterIndex);
+      if(startIndex === -1) {
+        console.error("straws who's id equals afterIndex not exists");
+        
+        return;
+      }
+      let newStraws = []
+      for(let s of action.payload.straws) {
+        let newStraw = {id: state.strawCount, name: ""}
+        if(typeof s.name === "string") 
+          newStraw.name = s.name;
+        else
+          continue;
+
+        if(s.rgb) 
+          newStraw.rgb = s.rgb;
+
+        newStraws.push(newStraw);
+        state.strawCount += 1;
+      }
+      console.log(newStraws);
+
+      state.straws.splice(startIndex, 0, ...newStraws);
     },
     removeStraw: (state, action) => {
       state.straws = state.straws.filter(item => {
@@ -45,7 +98,7 @@ export const strawSlice = createSlice({
       let idxToUpdate = state.straws.findIndex((item) => {
         return item.id === action.payload.id
       })
-      if(typeof action.payload.isPicked === "string") {
+      if(typeof action.payload.name === "string") {
         state.straws[idxToUpdate].name = action.payload.name
       }
       if(action.payload.rgb) {
@@ -83,6 +136,9 @@ export const strawSlice = createSlice({
       state.presets = state.presets.filter(item => {
         return item.id !== action.payload.id
       });
+    },
+    setIsPlayingAnimation: (state, action) => {
+      state.isPlayingAnimation = action.payload
     }
   }
 })
@@ -90,6 +146,9 @@ export const strawSlice = createSlice({
 export const { 
   addStraw, removeStraw, updateStraw, 
   addHistory, clearHistory,
-  loadPreset, savePreset, removePreset } = strawSlice.actions
+  loadPreset, savePreset, removePreset,
+  setIsPlayingAnimation,
+  addStraws
+} = strawSlice.actions
 
 export default strawSlice.reducer
