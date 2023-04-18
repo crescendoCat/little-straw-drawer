@@ -102,7 +102,6 @@ function TutorialInner(props) {
 	}, [handleResize, handleScroll])
 
 	useEffect(() => {
-		console.log("now display:", state?.display);
 		setToDisplay(state?.display)
 	}, [state, setToDisplay])
 
@@ -132,7 +131,9 @@ function TutorialInner(props) {
 				<Container>
 					<Row className="text-center justify-content-center">
 						<Col xs="auto">
-							<div className="px-2 py-1" style={{backgroundColor: "#0008", borderRadius: "10px"}}>{state?.display?.description}</div>
+							<div className="px-2 py-1" style={{backgroundColor: "#0008", borderRadius: "10px"}}>
+								{state?.display?.description}
+							</div>
 						</Col>
 					</Row>
 					<Row className="mt-2 justify-content-center text-center">

@@ -39,12 +39,20 @@ export const strawSlice = createSlice({
      * @return {undefined}     
      */
     updateStraw: (state, action) => {
+      if(typeof action.payload.id === "undefined") {
+        return;
+      }
       let idxToUpdate = state.straws.findIndex((item) => {
         return item.id === action.payload.id
       })
-      state.straws[idxToUpdate].name = action.payload.name
+      if(typeof action.payload.isPicked === "string") {
+        state.straws[idxToUpdate].name = action.payload.name
+      }
       if(action.payload.rgb) {
         state.straws[idxToUpdate].rgb = action.payload.rgb
+      }
+      if(typeof action.payload.isPicked !== "undefined") {
+        state.straws[idxToUpdate].isPicked = action.payload.isPicked
       }
     },
     addHistory: (state, action) => {
@@ -52,6 +60,10 @@ export const strawSlice = createSlice({
     },
     clearHistory: (state) => {
       state.history = [];
+      //clean up picked straws
+      for(let i in state.straws) {
+        state.straws[i].isPicked = false;
+      }
     },
     savePreset: (state) => {
       if(state.straws.length <= 0) return;

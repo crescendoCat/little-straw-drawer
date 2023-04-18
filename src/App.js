@@ -8,8 +8,13 @@ import StrawList from './components/Straw';
 import StrawResult from './components/StrawResult'
 import Menu from './components/Menu'
 import { useDispatch, useSelector } from 'react-redux';
-import { addHistory } from './features/straw/strawSlice';
-import Tutorial from "./components/Tutorial"
+import { 
+  addHistory,
+  updateStraw,
+  clearHistory
+} from './features/straw/strawSlice';
+import Tutorial from "./components/Tutorial";
+import Settings from "./components/Settings";
 
 import Share from './components/Share';
 
@@ -28,14 +33,42 @@ import {
 function App() {
   const dispatch = useDispatch();
   const straws = useSelector((state) => state.straw.straws);
+  const settings = useSelector((state) => state.settings);
   const showTutorial = useSelector(state => state.tutorial.showTutorial)
   const shareLink = window.location.href;
   const draw = () => {
-    let rnd = crypto.getRandomValues(new Uint32Array(straws.length))
+    let drawableStraws = [...straws];
+    let rndNum = drawableStraws.length;
+    if(!settings.isRepeatable) {
+      //選出還沒有被抽過的籤
+      drawableStraws = straws.filter(s => !s.isPicked);
+      rndNum = drawableStraws.length;
+      if(rndNum === 0) {
+        dispatch(clearHistory());
+        drawableStraws = [...straws];
+        rndNum = drawableStraws.length;
+        console.log("now straws:", rndNum);
+      }
+    }
+    
+
+    
+
+    let rnd = crypto.getRandomValues(new Uint32Array(rndNum))
     let randomIndex = rnd.indexOf(Math.max(...rnd))
     let picked = {
-      name: straws[randomIndex].name,
-      color: straws[randomIndex].rgb ?? {r: 255, g: 255, b: 255, a: 1}
+      name: drawableStraws[randomIndex].name,
+      color: drawableStraws[randomIndex].rgb ?? {r: 255, g: 255, b: 255, a: 1}
+    }
+    if(!settings.isRepeatable) {
+      console.log("picked:", {
+        id: drawableStraws[randomIndex].id,
+        isPicked: true
+      })
+      dispatch(updateStraw({
+        id: drawableStraws[randomIndex].id,
+        isPicked: true
+      }))
     }
     dispatch(addHistory(picked))
   }
@@ -94,7 +127,9 @@ function App() {
         </Col>
       </Row>
     </Container>
-    <Tutorial active={showTutorial}/>
+    <Settings />
+    <Tutorial active={showTutorial === "show" ? true: false}/>
+  
   </>
   );
 }

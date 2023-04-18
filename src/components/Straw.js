@@ -53,11 +53,11 @@ export const Straw = (props) => {
       }
     }
     if(isEdit === false) {
-      if(props.straw.name.trim() === "") {
+      if(props.straw?.name.trim() === "") {
         dispatch(removeStraw({id: props.straw.id}))
       }
     }
-  }, [isEdit])
+  }, [isEdit, dispatch, props.straw.id, props.straw.name])
   const popover = {
     position: 'absolute',
     zIndex: '2',
@@ -87,11 +87,14 @@ export const Straw = (props) => {
     background: rgb
   }
 
+  const deletedStraw = {
+    textDecorationLine: "line-through"
+  }
+
   return (
     <ListGroup.Item className={`straw-item d-flex ${light? "light" : ""}`}
       style={straw}
       onClick={(event) => {
-        console.log(event.target)
         setIsEdit(true)
       }}>
       { isEdit
@@ -101,7 +104,7 @@ export const Straw = (props) => {
             onKeyDown={handleKeyDown}
             onBlur={() => {setIsEdit(false)}}
             ></input>
-        : <div>{props.straw.name}</div>
+        : <div style={props.straw.isPicked ? deletedStraw : {}}>{props.straw.name}</div>
       }
       <div className="btn-color-picker  ms-auto">
         <div className="btn-color btn-icon" onClick={handlePick} 

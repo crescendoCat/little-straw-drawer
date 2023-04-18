@@ -10,6 +10,7 @@ import {
   removePreset
 } from '../features/straw/strawSlice';
 import { startTutorial } from '../features/tutorial/tutorialSlice';
+import { openSettings } from '../features/settings/slice';
 import { 
   FaTrashAlt, 
 } from 'react-icons/fa';
@@ -77,6 +78,11 @@ function Menu(props) {
             dispatch(startTutorial())
           }}>
             Help
+          </Button>
+          <Button variant="link" onClick={() => {
+            dispatch(openSettings())
+          }}>
+            Settings
           </Button>
         </Col>
       </Row>

@@ -1,15 +1,34 @@
 import { configureStore } from '@reduxjs/toolkit';
 import strawReducer from '../features/straw/strawSlice';
-import tutorialReducer from '../features/tutorial/tutorialSlice';
+import settingsReducer from '../features/settings/slice';
+import tutorialReducer, { tutorialDefault } from '../features/tutorial/tutorialSlice';
 import { save, load } from "redux-localstorage-simple"
+
+// tutorialDefault is immutable
+let defaultState = {...tutorialDefault}
 
 export default configureStore({
   reducer: {
     straw: strawReducer,
-    tutorial: tutorialReducer
+    tutorial: tutorialReducer,
+    settings: settingsReducer
   },
   middleware: [save({
-    ignoreStates: ['tutorial.tutorials']
+    states: [
+      "settings",
+      "straw",
+      "tutorial.showTutorial"
+    ]
   })],
-  preloadedState: load()
+  preloadedState: load({
+    states: [
+      "settings",
+      "straw",
+      "tutorial.showTutorial"
+    ],
+    preloadedState: {
+      tutorial: defaultState
+    }
+  })
 })
+
