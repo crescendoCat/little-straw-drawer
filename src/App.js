@@ -118,13 +118,19 @@ function App() {
     let speed =30;//speed
     let x, y, z, lastX, lastY, lastZ;
     x = y = z = lastX = lastY = lastZ = 0;
+    let lastInvoke = null;
     function shakeDetector(eventData){
       let acceleration =eventData.accelerationIncludingGravity;
       x = acceleration.x;
       y = acceleration.y;
       z = acceleration.z;
-      if(Math.abs(x-lastX)> speed ||Math.abs(y-lastY)> speed ||Math.abs(z-lastZ)> speed){
-        draw();
+      if(Math.abs(x-lastX)> speed ||
+          Math.abs(y-lastY)> speed ||
+          Math.abs(z-lastZ)> speed){
+        if(lastInvoke === null || Date.now() - lastInvoke > 5000) {
+          draw();
+          lastInvoke = Date.now()
+        }
         //alert(1);
       }
       lastX = x;
