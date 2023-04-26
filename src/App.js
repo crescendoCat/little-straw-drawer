@@ -39,21 +39,26 @@ function App() {
   const showTutorial = useSelector(state => state.tutorial.showTutorial)
   const shareLink = window.location.href;
   const draw = () => {
-    if(settings.showAnimation) {
-      dispatch(setIsPlayingAnimation(true));
-    }
     let drawableStraws = [...straws];
     let rndNum = drawableStraws.length;
+
+    if(rndNum <= 0) {
+      alert("No straws now! Add a straw then click \"draw\"!");
+      return;
+    }
+
     if(!settings.isRepeatable) {
       //選出還沒有被抽過的籤
       drawableStraws = straws.filter(s => !s.isPicked);
       rndNum = drawableStraws.length;
       if(rndNum === 0) {
-        dispatch(clearHistory());
-        drawableStraws = [...straws];
-        rndNum = drawableStraws.length;
-        console.log("now straws:", rndNum);
+        alert("No straws left! Clear the history and try again~");
+        return;
       }
+    }
+    
+    if(settings.showAnimation) {
+      dispatch(setIsPlayingAnimation(true));
     }
     
     let rnd = crypto.getRandomValues(new Uint32Array(rndNum))

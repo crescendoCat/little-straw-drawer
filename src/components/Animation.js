@@ -35,7 +35,13 @@ export default function AnimationModal() {
   ])
   const [prizes, setPrizes] = useState()
 
+  console.log(prizes.length);
+
   const startRolling = useCallback(() => { // 点击抽奖按钮会触发star回调
+    if(!isRepeatable && straws.filter(s => !s.isPicked).length <= 1) {
+      endRolling();
+      return;
+    }
     myLucky.current.play()
     setTimeout(() => {
       const index = strawIdPrizeIdxMapping[history[history.length-1].id]
@@ -79,7 +85,7 @@ export default function AnimationModal() {
     {
       radius: '30%', background: '#869cfa',
       pointer: true,
-      fonts: [{ text: '开始', top: '-10px' }]
+      fonts: [{ text: 'Start', top: '-10px' }]
     }
   ])
   const myLucky = useRef()
@@ -91,11 +97,12 @@ export default function AnimationModal() {
     size="lg"
     fullscreen="md-down"
     >
-    <Modal.Header>
-      <Modal.Title>Strawing...!!!</Modal.Title>
+    <Modal.Header closeButton>
+      <Modal.Title>Drawing...!!!</Modal.Title>
     </Modal.Header>
     <Modal.Body>
       <div style={{height: "75vh"}} className="d-flex justify-content-center align-items-center">
+      
       <LuckyWheel
         ref={myLucky}
         width="300px"
@@ -107,6 +114,11 @@ export default function AnimationModal() {
         onEnd={endRolling}
       />
       </div>
+      { (prizes?.length ?? 1) === 1 
+        ? <div className="text-center">這邊只有一支籤...為什麼不多加一點呢?</div>
+        : null
+
+      }
     </Modal.Body>
   </Modal>
 }
