@@ -35,8 +35,6 @@ export default function AnimationModal() {
   ])
   const [prizes, setPrizes] = useState([])
 
-  console.log(prizes.length);
-
   const startRolling = useCallback(() => { // 点击抽奖按钮会触发star回调
     if(!isRepeatable && straws.filter(s => !s.isPicked).length <= 1) {
       endRolling();
@@ -51,6 +49,25 @@ export default function AnimationModal() {
 
   const endRolling = useCallback(prize => { // 抽奖结束会触发end回调
     alert('抽獎結果 ' + history[history.length-1].name)
+    /* Easter eggs */
+    if(history[history.length-1].name === "雞肋") {
+      alert("本抽獎系統並沒有這麼雞肋，請尊重。")
+    }
+    if(history.length >= 5 && straws.length > 1) {
+      let easterEggCnt = 0;
+      for(let i = history.length-5; i < history.length; i++) {
+        if(history[i].name === history[history.length-1].name) {
+          easterEggCnt += 1;
+        }
+      }
+
+      if( easterEggCnt === 5 ) {
+        alert(`恭喜你，連續抽到五次名為${ history[history.length-1].name }的簽。
+幸運之神顯然眷顧了你。`)
+      }
+    }
+
+    /* end of easter eggs */
     dispatch(setIsPlayingAnimation(false));
     if(showAnimation && !isRepeatable) {
       dispatch(updateStraw({

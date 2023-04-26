@@ -21,6 +21,11 @@ import Animation from "./components/Animation";
 import Share from './components/Share';
 
 import {
+  useEffect,
+  useCallback
+} from 'react';
+
+import {
   FacebookShareButton,
   FacebookIcon,
   LineShareButton,
@@ -35,10 +40,11 @@ import {
 function App() {
   const dispatch = useDispatch();
   const straws = useSelector((state) => state.straw.straws);
+  const history = useSelector((state) => state.straw.history);
   const settings = useSelector((state) => state.settings);
   const showTutorial = useSelector(state => state.tutorial.showTutorial)
   const shareLink = window.location.href;
-  const draw = () => {
+  const draw = useCallback(() => {
     let drawableStraws = [...straws];
     let rndNum = drawableStraws.length;
 
@@ -68,6 +74,30 @@ function App() {
       name: drawableStraws[randomIndex].name,
       color: drawableStraws[randomIndex].rgb ?? {r: 255, g: 255, b: 255, a: 1}
     }
+
+    if(!settings.showAnimation) {
+      /* Easter eggs */
+      if(picked.name === "雞肋") {
+        alert("本抽獎系統並沒有這麼雞肋，請尊重。")
+      }
+      if(history.length >= 4 && straws.length > 1) {
+        let easterEggCnt = 0;
+        for(let i = history.length-4; i < history.length; i++) {
+          if(history[i].name === picked.name) {
+            easterEggCnt += 1;
+          }
+        }
+        console.log("in", history.length, easterEggCnt)
+
+        if( easterEggCnt === 4 ) {
+          alert(`恭喜你，連續抽到五次名為${ picked.name }的簽。
+幸運之神顯然眷顧了你。`)
+        }
+      }
+
+      /* end of easter eggs */
+    }
+
     if(!settings.isRepeatable) {
       //如果不需要顯示動畫，則直接將選到的標為已選
       if(!settings.showAnimation) {
@@ -79,7 +109,29 @@ function App() {
       //如果需要顯示，則交給Animation更新straws
     }
     dispatch(addHistory(picked))
-  }
+  }, [dispatch, history, settings.isRepeatable, settings.showAnimation, straws]);
+
+  useEffect(() => {
+    if(window.DeviceMotionEvent){
+      window.addEventListener('devicemotion', shakeDetector,false);
+    }
+    let speed =30;//speed
+    let x, y, z, lastX, lastY, lastZ;
+    x = y = z = lastX = lastY = lastZ = 0;
+    function shakeDetector(eventData){
+      let acceleration =eventData.accelerationIncludingGravity;
+      x = acceleration.x;
+      y = acceleration.y;
+      z = acceleration.z;
+      if(Math.abs(x-lastX)> speed ||Math.abs(y-lastY)> speed ||Math.abs(z-lastZ)> speed){
+        draw();
+        //alert(1);
+      }
+      lastX = x;
+      lastY = y;
+      lastZ = z;
+    } 
+  }, [draw])
 
   return (
   <>
