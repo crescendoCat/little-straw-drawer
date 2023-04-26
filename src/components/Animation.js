@@ -33,7 +33,7 @@ export default function AnimationModal() {
   const [blocks] = useState([
     { padding: '10px', background: '#869cfa' }
   ])
-  const [prizes, setPrizes] = useState()
+  const [prizes, setPrizes] = useState([])
 
   console.log(prizes.length);
 
