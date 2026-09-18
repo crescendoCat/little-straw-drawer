@@ -1,4 +1,50 @@
-import { hslToRgb, rgbToHsl, rgbObj2HexStr, hexStr2RgbObj } from './utils';
+import { hslToRgb, rgbToHsl, rgbObj2HexStr, hexStr2RgbObj, lockPortrait } from './utils';
+
+describe('lockPortrait', () => {
+  const original = Object.getOwnPropertyDescriptor(window.screen, 'orientation');
+  const setOrientation = (value) => {
+    Object.defineProperty(window.screen, 'orientation', { value, configurable: true });
+  };
+
+  afterEach(() => {
+    if (original) Object.defineProperty(window.screen, 'orientation', original);
+    else delete window.screen.orientation;
+  });
+
+  test('resolves false when the API is missing', async () => {
+    setOrientation(undefined);
+    await expect(lockPortrait()).resolves.toBe(false);
+  });
+
+  test('requests a portrait-primary lock by default and resolves true on success', async () => {
+    const lock = vi.fn().mockResolvedValue(undefined);
+    setOrientation({ lock });
+    await expect(lockPortrait()).resolves.toBe(true);
+    expect(lock).toHaveBeenCalledWith('portrait-primary');
+  });
+
+  test('accepts another orientation type', async () => {
+    const lock = vi.fn().mockResolvedValue(undefined);
+    setOrientation({ lock });
+    await lockPortrait('portrait');
+    expect(lock).toHaveBeenCalledWith('portrait');
+  });
+
+  test('swallows NotSupportedError rejections (desktop browsers)', async () => {
+    const lock = vi.fn().mockRejectedValue(new DOMException('not available on this device', 'NotSupportedError'));
+    setOrientation({ lock });
+    await expect(lockPortrait()).resolves.toBe(false);
+  });
+
+  test('swallows synchronous throws too', async () => {
+    setOrientation({
+      lock: () => {
+        throw new TypeError('boom');
+      },
+    });
+    await expect(lockPortrait()).resolves.toBe(false);
+  });
+});
 
 describe('hslToRgb', () => {
   test('achromatic (s = 0) yields equal channels', () => {

@@ -99,6 +99,32 @@ export function hexStr2RgbObj(str) {
     }
 }
 
+/**
+ * Best-effort portrait lock for phones/tablets.
+ *
+ * `screen.orientation.lock()` only works on mobile browsers, and usually only
+ * in fullscreen or when installed as a PWA. Desktop browsers reject with
+ * NotSupportedError, so the rejection is swallowed here instead of surfacing
+ * as an "Uncaught (in promise)" error on every page load.
+ *
+ * @param  {string} [type='portrait-primary'] an OrientationLockType
+ * @return {Promise<boolean>} true when the lock was applied
+ */
+export function lockPortrait(type = 'portrait-primary') {
+  const orientation = globalThis.screen?.orientation;
+  if (!orientation || typeof orientation.lock !== 'function') {
+    return Promise.resolve(false);
+  }
+  try {
+    return Promise.resolve(orientation.lock(type)).then(
+      () => true,
+      () => false
+    );
+  } catch {
+    return Promise.resolve(false);
+  }
+}
+
 // Hook
 export function useWindowSize() {
   // Initialize state with undefined width/height so server and client renders match
