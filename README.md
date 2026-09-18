@@ -2,6 +2,11 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Requirements
+
+- Node.js 24 (see `.nvmrc` / `.node-version`; `nvm use` or `fnm use` picks it up automatically)
+- npm 10 or later
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -18,6 +23,10 @@ You may also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run test:ci`
+
+Runs the whole test suite once without watch mode (for CI or a quick local check).
 
 ### `npm run build`
 

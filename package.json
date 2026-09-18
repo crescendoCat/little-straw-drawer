@@ -2,6 +2,10 @@
   "name": "little-straw-drawer",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=24",
+    "npm": ">=10"
+  },
   "dependencies": {
     "@lucky-canvas/react": "^0.1.13",
     "@reduxjs/toolkit": "^1.8.3",
@@ -28,7 +32,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:ci": "react-scripts test --watchAll=false"
   },
   "eslintConfig": {
     "extends": [
