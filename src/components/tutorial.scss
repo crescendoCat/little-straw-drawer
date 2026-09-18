@@ -1,5 +1,23 @@
 .tutorial {
 	position: fixed;
+	.tutorial-skip {
+		top: 16px;
+		right: 16px;
+		z-index: 2;
+		font-weight: 600;
+		border-radius: 999px;
+		padding: 0.4rem 0.9rem;
+		border: 2px solid #fff;
+		svg {
+			font-size: 1.1rem;
+		}
+	}
+	@media (min-width: 992px) {
+		.tutorial-skip {
+			top: 24px;
+			right: 24px;
+		}
+	}
 	width: 100vw;
 	height: 100vw;
 	top: 0;

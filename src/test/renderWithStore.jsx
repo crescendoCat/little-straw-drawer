@@ -4,6 +4,7 @@ import { render } from '@testing-library/react';
 import strawReducer from '../features/straw/strawSlice';
 import settingsReducer from '../features/settings/slice';
 import tutorialReducer from '../features/tutorial/tutorialSlice';
+import whatsNewReducer from '../features/whatsNew/whatsNewSlice';
 
 /**
  * Build an in-memory store with the same reducers as the app but without
@@ -17,6 +18,7 @@ export function makeStore(preloadedState) {
       straw: strawReducer,
       settings: settingsReducer,
       tutorial: tutorialReducer,
+      whatsNew: whatsNewReducer,
     },
     preloadedState,
     middleware: (getDefault) => getDefault({ serializableCheck: false }),

@@ -5,6 +5,7 @@ import {
 	useCallback
 } from "react";
 import { GrNext, GrPrevious } from "react-icons/gr";
+import { FaXmark } from "react-icons/fa6";
 import {
 	Container,
 	Row,
@@ -156,10 +157,15 @@ function TutorialInner(props) {
 							</ControlBtn>
 						</Col>
 					</Row>
-					<div className="btn-close btn-light position-fixed" style={{top: 20, right: 20}}
+					<Button
+						variant="light"
+						className="tutorial-skip position-fixed d-flex align-items-center gap-1 shadow"
+						aria-label="Skip tutorial"
 						onClick={() => dispatch(endTutorial())}
-						>
-					</div>
+					>
+						<FaXmark aria-hidden="true" />
+						<span>Skip tutorial</span>
+					</Button>
 				</Container>
 			</div>
 		</div>

@@ -57,7 +57,8 @@ export let tutorialDefault = {
     description: "Welcome to the tutorial of Mi Mi's Draw Machine"
   },
   currentPosition: 0,
-  showTutorial: "show"
+  // "show" | "hide". Starts hidden; the What's New modal offers the tour.
+  showTutorial: "hide"
 }
 
 export const tutorialSlice = createSlice({

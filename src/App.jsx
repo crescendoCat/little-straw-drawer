@@ -15,6 +15,7 @@ import {
   setIsPlayingAnimation
 } from './features/straw/strawSlice';
 import Tutorial from "./components/Tutorial";
+import WhatsNew from "./components/WhatsNew";
 import Settings from "./components/Settings";
 import Animation from "./components/Animation";
 
@@ -193,6 +194,7 @@ function App() {
     </Container>
     <Settings />
     <Animation />
+    <WhatsNew />
     <Tutorial active={showTutorial === "show" ? true: false}/>
   
   </>

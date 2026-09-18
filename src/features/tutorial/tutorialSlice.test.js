@@ -4,9 +4,9 @@ const initialState = reducer(undefined, { type: '@@INIT' });
 const lastIndex = tutorialDefault.tutorials.length - 1;
 
 describe('tutorialSlice', () => {
-  test('initial state shows the first step', () => {
+  test('initial state is hidden and points at the first step', () => {
     expect(initialState.currentPosition).toBe(0);
-    expect(initialState.showTutorial).toBe('show');
+    expect(initialState.showTutorial).toBe('hide');
     expect(initialState.display.description).toBe(tutorialDefault.tutorials[0].description);
   });
 
@@ -23,7 +23,8 @@ describe('tutorialSlice', () => {
   });
 
   test('previous steps back and hides the tutorial when going before the first step', () => {
-    let state = reducer(initialState, next());
+    let state = reducer(initialState, startTutorial());
+    state = reducer(state, next());
     state = reducer(state, previous());
     expect(state.currentPosition).toBe(0);
     expect(state.showTutorial).toBe('show');
