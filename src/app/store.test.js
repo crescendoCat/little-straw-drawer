@@ -10,6 +10,11 @@ import { addStraw, savePreset, addHistory, removeStraw } from '../features/straw
 import { setRepeatable, setAnimationTimeout } from '../features/settings/slice';
 import { startTutorial, endTutorial, tutorialDefault } from '../features/tutorial/tutorialSlice';
 import { markWhatsNewSeen, WHATS_NEW_VERSION } from '../features/whatsNew/whatsNewSlice';
+import { cloudInitialState } from '../features/cloud/cloudSlice';
+import { linkDrive, saveToDrive, resolveConflict, unlinkDrive } from '../features/cloud/cloudThunks';
+import { hydrate as hydrateStraw } from '../features/straw/strawSlice';
+import { hydrate as hydrateSettings } from '../features/settings/slice';
+import { SNAPSHOT_APP, PRE_RESTORE_BACKUP_KEY, validateSnapshot } from '../features/cloud/snapshot';
 
 const seed = (path, value) => localStorage.setItem(storageKeyFor(path), JSON.stringify(value));
 const readKey = (path) => {
@@ -49,7 +54,16 @@ describe('localStorage persistence (src/app/store.js)', () => {
 
   describe('contract', () => {
     test('persisted paths are exactly the documented list', () => {
-      expect(PERSISTED_STATES).toEqual(['settings', 'straw', 'tutorial.showTutorial', 'whatsNew.seenVersion']);
+      expect(PERSISTED_STATES).toEqual([
+        'settings',
+        'straw',
+        'tutorial.showTutorial',
+        'whatsNew.seenVersion',
+        'cloud.linked',
+        'cloud.fileId',
+        'cloud.lastSyncedAt',
+        'cloud.lastSyncedFingerprint',
+      ]);
     });
 
     test('keys use the library default namespace and keep the dot of nested paths', () => {
@@ -60,9 +74,10 @@ describe('localStorage persistence (src/app/store.js)', () => {
 
     test('defaultPreloadedState seeds every slice with its initial state', () => {
       const base = defaultPreloadedState();
-      expect(Object.keys(base).sort()).toEqual(['settings', 'straw', 'tutorial', 'whatsNew']);
+      expect(Object.keys(base).sort()).toEqual(['cloud', 'settings', 'straw', 'tutorial', 'whatsNew']);
       expect(base.straw.straws).toHaveLength(3);
       expect(base.tutorial).toEqual(tutorialDefault);
+      expect(base.cloud).toEqual(cloudInitialState);
       expect(Object.isFrozen(base.straw)).toBe(false); // load() mutates the base while merging
     });
   });
@@ -105,12 +120,13 @@ describe('localStorage persistence (src/app/store.js)', () => {
       expect(readKey('whatsNew.seenVersion')).toBe(WHATS_NEW_VERSION);
     });
 
-    test('only the documented keys are written', () => {
+    test('only the documented keys are written (falsy nested values are left out)', () => {
       const store = createAppStore();
       store.dispatch(addStraw('x'));
       store.dispatch(markWhatsNewSeen());
       const keys = Object.keys(localStorage).sort();
-      expect(keys).toEqual(PERSISTED_STATES.map(storageKeyFor).sort());
+      // cloud.* are all falsy while unlinked, so the library removes those keys
+      expect(keys).toEqual(['settings', 'straw', 'tutorial.showTutorial', 'whatsNew.seenVersion'].map(storageKeyFor).sort());
     });
 
     test('a store created with persist:false never touches localStorage', () => {
@@ -241,6 +257,125 @@ describe('localStorage persistence (src/app/store.js)', () => {
       store.dispatch(addStraw('Recovered'));
       expect(readKey('straw').straws.map((s) => s.name)).toContain('Recovered');
       expect(createAppStore().getState().straw.straws.map((s) => s.name)).toContain('Recovered');
+    });
+  });
+
+  describe('Google Drive link (cloud slice)', () => {
+    const syncedPayload = {
+      outcome: 'synced',
+      fileId: 'file-1',
+      savedAt: '2026-09-19T08:00:00.000Z',
+      fingerprint: 'deadbeef:42',
+    };
+    const remoteData = {
+      straw: {
+        straws: [{ id: 10, name: 'Remote' }],
+        history: [],
+        presets: [],
+        strawCount: 11,
+        presetCount: 0,
+      },
+      settings: { isRepeatable: false, showAnimation: true, animationType: 'default', animationTimeout: 650 },
+    };
+
+    test('only the four link fields are persisted; transient fields stay in memory', () => {
+      const store = createAppStore();
+      store.dispatch({ type: linkDrive.pending.type });
+      store.dispatch({ type: saveToDrive.rejected.type, payload: { code: 'api', message: 'boom' } });
+      expect(store.getState().cloud.error).toBe('boom');
+
+      const cloudKeys = Object.keys(localStorage).filter((k) => k.startsWith(storageKeyFor('cloud')));
+      expect(cloudKeys).toEqual([]); // still unlinked: every persisted field is falsy
+
+      store.dispatch({ type: linkDrive.fulfilled.type, payload: syncedPayload });
+      expect(readKey('cloud.linked')).toBe(true);
+      expect(readKey('cloud.fileId')).toBe('file-1');
+      expect(readKey('cloud.lastSyncedAt')).toBe(syncedPayload.savedAt);
+      expect(readKey('cloud.lastSyncedFingerprint')).toBe(syncedPayload.fingerprint);
+      expect(localStorage.getItem(storageKeyFor('cloud.busy'))).toBeNull();
+      expect(localStorage.getItem(storageKeyFor('cloud.error'))).toBeNull();
+      expect(localStorage.getItem(storageKeyFor('cloud.pendingRemote'))).toBeNull();
+    });
+
+    test('the link survives a reload while transient fields reset', () => {
+      const first = createAppStore();
+      first.dispatch({ type: linkDrive.fulfilled.type, payload: syncedPayload });
+      first.dispatch({ type: saveToDrive.pending.type });
+
+      const { cloud } = createAppStore().getState();
+      expect(cloud).toEqual({
+        ...cloudInitialState,
+        linked: true,
+        fileId: 'file-1',
+        lastSyncedAt: syncedPayload.savedAt,
+        lastSyncedFingerprint: syncedPayload.fingerprint,
+      });
+      expect(cloud.busy).toBe('idle');
+    });
+
+    test('an unlinked device reloads with the complete cloud default state', () => {
+      const store = createAppStore();
+      store.dispatch(addStraw('x'));
+      expect(createAppStore().getState().cloud).toEqual(cloudInitialState);
+    });
+
+    test('a restore is written to localStorage immediately, so a reload keeps the restored data', () => {
+      const store = createAppStore();
+      store.dispatch(hydrateStraw(remoteData.straw));
+      store.dispatch(hydrateSettings(remoteData.settings));
+
+      expect(readKey('straw').straws).toEqual(remoteData.straw.straws);
+      expect(readKey('settings').animationTimeout).toBe(650);
+
+      const reloaded = createAppStore().getState();
+      expect(reloaded.straw.straws).toEqual(remoteData.straw.straws);
+      expect(reloaded.straw.strawCount).toBe(11);
+      expect(reloaded.settings.isRepeatable).toBe(false);
+    });
+
+    test('resolving a conflict by restoring keeps a pre-restore copy of the local data', async () => {
+      const store = createAppStore();
+      store.dispatch(addStraw('Local only'));
+      const localNames = store.getState().straw.straws.map((s) => s.name);
+      store.dispatch({
+        type: linkDrive.fulfilled.type,
+        payload: {
+          outcome: 'conflict',
+          fileId: 'file-1',
+          pendingRemote: {
+            fileId: 'file-1',
+            modifiedTime: 't',
+            savedAt: '2026-09-18T00:00:00.000Z',
+            snapshot: { version: 1, app: SNAPSHOT_APP, savedAt: '2026-09-18T00:00:00.000Z', data: remoteData },
+          },
+        },
+      });
+
+      await store.dispatch(resolveConflict('restore'));
+
+      expect(store.getState().straw.straws.map((s) => s.name)).toEqual(['Remote']);
+      expect(readKey('straw').straws.map((s) => s.name)).toEqual(['Remote']);
+
+      const backup = validateSnapshot(JSON.parse(localStorage.getItem(PRE_RESTORE_BACKUP_KEY)));
+      expect(backup.data.straw.straws.map((s) => s.name)).toEqual(localNames);
+      expect(backup.data.straw.straws.map((s) => s.name)).toContain('Local only');
+    });
+
+    test('unlinking forgets the link but leaves local data keys untouched', async () => {
+      const store = createAppStore();
+      store.dispatch(addStraw('Stays'));
+      store.dispatch({ type: linkDrive.fulfilled.type, payload: syncedPayload });
+      const strawBefore = localStorage.getItem(storageKeyFor('straw'));
+      const settingsBefore = localStorage.getItem(storageKeyFor('settings'));
+
+      await store.dispatch(unlinkDrive());
+
+      expect(store.getState().cloud).toEqual(cloudInitialState);
+      expect(localStorage.getItem(storageKeyFor('cloud.linked'))).toBeNull();
+      expect(localStorage.getItem(storageKeyFor('cloud.fileId'))).toBeNull();
+      expect(localStorage.getItem(storageKeyFor('straw'))).toBe(strawBefore);
+      expect(localStorage.getItem(storageKeyFor('settings'))).toBe(settingsBefore);
+      expect(createAppStore().getState().straw.straws.map((s) => s.name)).toContain('Stays');
     });
   });
 });

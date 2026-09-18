@@ -139,6 +139,40 @@ export const strawSlice = createSlice({
     },
     setIsPlayingAnimation: (state, action) => {
       state.isPlayingAnimation = action.payload
+    },
+    /**
+     * Replace the persisted part of this slice with a backup (cloud restore).
+     * Arrays and objects are copied so state never shares references with the
+     * payload. Counters are recomputed from the ids when missing or too low so
+     * new straws/presets can never collide with restored ones.
+     * @param {object} action.payload { straws, history?, presets?, strawCount?, presetCount? }
+     */
+    hydrate: (state, action) => {
+      const payload = action.payload
+      if (!payload || !Array.isArray(payload.straws)) return
+
+      const copyStraws = (list) => (Array.isArray(list) ? list.map(s => ({ ...s })) : [])
+      const maxId = (items) => items.reduce((max, item) => (Number.isInteger(item?.id) && item.id > max ? item.id : max), -1)
+
+      const straws = copyStraws(payload.straws)
+      const history = Array.isArray(payload.history) ? payload.history.map(h => ({ ...h })) : []
+      const presets = Array.isArray(payload.presets)
+        ? payload.presets.map(p => ({ id: p.id, value: copyStraws(p.value) }))
+        : []
+
+      const maxStrawId = Math.max(maxId(straws), ...presets.map(p => maxId(p.value)))
+      const maxPresetId = maxId(presets)
+
+      state.straws = straws
+      state.history = history
+      state.presets = presets
+      state.strawCount = Number.isInteger(payload.strawCount) && payload.strawCount > maxStrawId
+        ? payload.strawCount
+        : maxStrawId + 1
+      state.presetCount = Number.isInteger(payload.presetCount) && payload.presetCount > maxPresetId
+        ? payload.presetCount
+        : maxPresetId + 1
+      state.isPlayingAnimation = false
     }
   }
 })
@@ -148,7 +182,8 @@ export const {
   addHistory, clearHistory,
   loadPreset, savePreset, removePreset,
   setIsPlayingAnimation,
-  addStraws
+  addStraws,
+  hydrate
 } = strawSlice.actions
 
 export default strawSlice.reducer

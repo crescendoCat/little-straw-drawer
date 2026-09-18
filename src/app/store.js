@@ -4,6 +4,7 @@ import strawReducer from '../features/straw/strawSlice';
 import settingsReducer from '../features/settings/slice';
 import tutorialReducer from '../features/tutorial/tutorialSlice';
 import whatsNewReducer from '../features/whatsNew/whatsNewSlice';
+import cloudReducer from '../features/cloud/cloudSlice';
 
 /**
  * localStorage persistence contract.
@@ -22,6 +23,11 @@ export const PERSISTED_STATES = [
   'straw',
   'tutorial.showTutorial',
   'whatsNew.seenVersion',
+  // Google Drive link; transient fields (busy, error, pendingRemote) stay in memory
+  'cloud.linked',
+  'cloud.fileId',
+  'cloud.lastSyncedAt',
+  'cloud.lastSyncedFingerprint',
 ];
 
 export const rootReducer = {
@@ -29,6 +35,7 @@ export const rootReducer = {
   tutorial: tutorialReducer,
   settings: settingsReducer,
   whatsNew: whatsNewReducer,
+  cloud: cloudReducer,
 };
 
 /**

@@ -56,6 +56,19 @@ export const settingsSlice = createSlice({
     },
     setAnimationTimeout: (state, action) => {
       state.animationTimeout = parseInt(action.payload)
+    },
+    /**
+     * Merge settings from a backup (cloud restore). Each field is type-checked
+     * and unknown keys are ignored; `displaySetting` (the modal flag) is never
+     * touched so restoring cannot pop the settings dialog open.
+     */
+    hydrate: (state, action) => {
+      const payload = action.payload
+      if (!payload || typeof payload !== 'object') return
+      if (typeof payload.isRepeatable === 'boolean') state.isRepeatable = payload.isRepeatable
+      if (typeof payload.showAnimation === 'boolean') state.showAnimation = payload.showAnimation
+      if (typeof payload.animationType === 'string') state.animationType = payload.animationType
+      if (Number.isFinite(payload.animationTimeout)) state.animationTimeout = payload.animationTimeout
     }
   }
 })
@@ -67,7 +80,8 @@ export const {
   setRepeatable,
   setShowAnimation,
   setAnimationType,
-  setAnimationTimeout
+  setAnimationTimeout,
+  hydrate
 } = settingsSlice.actions
 
 export default settingsSlice.reducer

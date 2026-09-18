@@ -6,6 +6,7 @@ import reducer, {
   setShowAnimation,
   setAnimationType,
   setAnimationTimeout,
+  hydrate,
 } from './slice';
 
 const initialState = reducer(undefined, { type: '@@INIT' });
@@ -44,5 +45,43 @@ describe('settingsSlice', () => {
   test('setAnimationTimeout parses numeric strings', () => {
     expect(reducer(initialState, setAnimationTimeout('1500')).animationTimeout).toBe(1500);
     expect(reducer(initialState, setAnimationTimeout(200)).animationTimeout).toBe(200);
+  });
+
+  describe('hydrate (restore from backup)', () => {
+    test('merges the four backed-up fields', () => {
+      const state = reducer(
+        initialState,
+        hydrate({ isRepeatable: false, showAnimation: false, animationType: 'wheel', animationTimeout: 900 })
+      );
+      expect(state).toEqual({
+        isRepeatable: false,
+        showAnimation: false,
+        animationType: 'wheel',
+        animationTimeout: 900,
+        displaySetting: false,
+      });
+    });
+
+    test('never touches displaySetting', () => {
+      const open = reducer(initialState, openSettings());
+      const state = reducer(open, hydrate({ isRepeatable: false, displaySetting: false }));
+      expect(state.displaySetting).toBe(true);
+      expect(state.isRepeatable).toBe(false);
+    });
+
+    test('ignores wrong types, unknown keys and non-object payloads', () => {
+      const state = reducer(
+        initialState,
+        hydrate({ isRepeatable: 'yes', showAnimation: 1, animationType: 5, animationTimeout: 'fast', bogus: true })
+      );
+      expect(state).toEqual(initialState);
+      expect(reducer(initialState, hydrate(null))).toEqual(initialState);
+      expect(reducer(initialState, hydrate('x'))).toEqual(initialState);
+    });
+
+    test('accepts a partial payload', () => {
+      const state = reducer(initialState, hydrate({ animationTimeout: 250 }));
+      expect(state).toEqual({ ...initialState, animationTimeout: 250 });
+    });
   });
 });

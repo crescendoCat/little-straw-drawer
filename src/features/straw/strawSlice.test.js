@@ -9,6 +9,7 @@ import reducer, {
   loadPreset,
   removePreset,
   setIsPlayingAnimation,
+  hydrate,
 } from './strawSlice';
 
 const initialState = reducer(undefined, { type: '@@INIT' });
@@ -153,5 +154,75 @@ describe('strawSlice', () => {
     const state = reducer(initialState, setIsPlayingAnimation(true));
     expect(state.isPlayingAnimation).toBe(true);
     expect(reducer(state, setIsPlayingAnimation(false)).isPlayingAnimation).toBe(false);
+  });
+
+  describe('hydrate (restore from backup)', () => {
+    const rgb = { r: 1, g: 2, b: 3, a: 1 };
+    const payload = () => ({
+      straws: [
+        { id: 5, name: 'A', rgb },
+        { id: 9, name: 'B', isPicked: true },
+      ],
+      history: [{ id: 5, name: 'A', color: rgb }],
+      presets: [{ id: 2, value: [{ id: 5, name: 'A' }, { id: 12, name: 'Old preset straw' }] }],
+      strawCount: 20,
+      presetCount: 4,
+    });
+
+    test('replaces straws, history, presets and counters', () => {
+      const state = reducer({ ...initialState, isPlayingAnimation: true }, hydrate(payload()));
+      expect(state.straws).toEqual(payload().straws);
+      expect(state.history).toEqual(payload().history);
+      expect(state.presets).toEqual(payload().presets);
+      expect(state.strawCount).toBe(20);
+      expect(state.presetCount).toBe(4);
+      expect(state.isPlayingAnimation).toBe(false);
+    });
+
+    test('recomputes counters from ids across straws and presets when they are missing', () => {
+      const { strawCount, presetCount, ...withoutCounters } = payload();
+      const state = reducer(initialState, hydrate(withoutCounters));
+      expect(state.strawCount).toBe(13); // preset contains id 12
+      expect(state.presetCount).toBe(3);
+    });
+
+    test('raises counters that are not above the highest id', () => {
+      const state = reducer(initialState, hydrate({ ...payload(), strawCount: 6, presetCount: 2 }));
+      expect(state.strawCount).toBe(13);
+      expect(state.presetCount).toBe(3);
+    });
+
+    test('defaults missing history and presets to empty arrays', () => {
+      const state = reducer(initialState, hydrate({ straws: [{ id: 0, name: 'Solo' }] }));
+      expect(state.history).toEqual([]);
+      expect(state.presets).toEqual([]);
+      expect(state.strawCount).toBe(1);
+      expect(state.presetCount).toBe(0);
+    });
+
+    test('ignores a payload without a straws array', () => {
+      expect(reducer(initialState, hydrate({ history: [] }))).toEqual(initialState);
+      expect(reducer(initialState, hydrate(null))).toEqual(initialState);
+    });
+
+    test('ids stay unique for straws and presets added after a restore', () => {
+      let state = reducer(initialState, hydrate(payload()));
+      state = reducer(state, addStraw('New'));
+      state = reducer(state, savePreset());
+      const strawIds = [...state.straws.map((s) => s.id), ...state.presets.flatMap((p) => p.value.map((s) => s.id))];
+      expect(state.straws.at(-1).id).toBe(20);
+      expect(new Set(strawIds).size).toBe(new Set(strawIds).size); // sanity
+      expect(state.presets.map((p) => p.id)).toEqual([2, 4]);
+    });
+
+    test('does not share object references with the payload', () => {
+      const input = payload();
+      const state = reducer(initialState, hydrate(input));
+      expect(state.straws[0]).not.toBe(input.straws[0]);
+      expect(state.presets[0].value[0]).not.toBe(input.presets[0].value[0]);
+      const changed = reducer(state, updateStraw({ id: 5, name: 'Changed' }));
+      expect(changed.straws[0].name).toBe('Changed');
+      expect(input.straws[0].name).toBe('A');
+    });
   });
 });
