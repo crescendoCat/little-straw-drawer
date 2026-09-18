@@ -77,6 +77,12 @@ function Settings(props) {
             <InputGroup.Text>millisecond</InputGroup.Text>
           </InputGroup>
         </Form>
+        <hr />
+        <nav className="small text-secondary d-flex flex-wrap gap-3" aria-label="Legal">
+          <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+          <a href="/terms.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>
+          <a href="https://github.com/crescendoCat/little-straw-drawer" target="_blank" rel="noopener noreferrer">Source code</a>
+        </nav>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={_closeSettings}>

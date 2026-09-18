@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>Privacy Policy — Mi Mi Draw Machine</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        margin: 0;
+        padding: 2rem 1rem 4rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;
+        line-height: 1.6;
+        color: #212529;
+        background: #fff;
+      }
+      main { max-width: 44rem; margin: 0 auto; }
+      h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+      h2 { font-size: 1.2rem; margin-top: 2rem; }
+      .meta { color: #6c757d; font-size: 0.9rem; }
+      nav a { margin-right: 1rem; }
+      hr { margin: 3rem 0; border: 0; border-top: 1px solid #dee2e6; }
+      code { font-size: 0.9em; }
+      @media (prefers-color-scheme: dark) {
+        body { color: #dee2e6; background: #121416; }
+        .meta { color: #adb5bd; }
+        hr { border-top-color: #343a40; }
+        a { color: #8ab4f8; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav class="meta">
+        <a href="/">← Back to the app</a>
+        <a href="/terms.html">Terms of Service</a>
+        <a href="#zh">中文版</a>
+      </nav>
+
+      <h1>Privacy Policy — Mi Mi Draw Machine</h1>
+      <p class="meta">Last updated: 2026-09-19</p>
+
+      <p>
+        Mi Mi Draw Machine ("the App") is a free web app for drawing straws. This page explains what data the App
+        handles and how.
+      </p>
+
+      <h2>1. Data on your device</h2>
+      <p>
+        Your straws, presets, drawing history and settings are stored only in your browser's local storage. They never
+        leave your device unless you back them up to Google Drive (section 2). Clearing site data removes them.
+      </p>
+
+      <h2>2. Google Drive backup (optional)</h2>
+      <p>
+        When you click "Link Google Drive", the App requests the scope
+        <code>https://www.googleapis.com/auth/drive.appdata</code>. It grants access only to a hidden, app-specific
+        folder in your own Google Drive; the App cannot see or change any other file.
+      </p>
+      <ul>
+        <li>
+          <strong>What is stored:</strong> one file, <code>little-straw-drawer.json</code>, containing your straws,
+          presets, drawing history and settings.
+        </li>
+        <li>
+          <strong>When:</strong> only when you press "Save to Drive", "Restore from Drive" or choose an option in the
+          first-link dialog. There is no automatic sync.
+        </li>
+        <li>
+          <strong>How:</strong> your browser talks to Google directly. The App has no server; the developer never
+          receives, stores or sees your data or Google account details.
+        </li>
+        <li><strong>Access token:</strong> kept in browser memory only and expires after about one hour.</li>
+        <li>
+          <strong>Unlinking:</strong> "Unlink Google Drive" revokes the token and forgets the link on this device. The
+          backup stays in your Drive until you delete it under Google Drive → Settings → Manage apps, or revoke access
+          at <a href="https://myaccount.google.com/permissions">https://myaccount.google.com/permissions</a>.
+        </li>
+      </ul>
+      <p>
+        The App's use of information received from Google APIs adheres to the
+        <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>,
+        including the Limited Use requirements. Google user data is never sold, used for advertising, or read by
+        humans.
+      </p>
+
+      <h2>3. Analytics</h2>
+      <p>
+        The site loads Google Analytics and Cloudflare Web Analytics, which collect aggregated technical data (page
+        views, approximate region, browser, device). Cloudflare Web Analytics uses no cookies; Google Analytics may,
+        and can be blocked in your browser. Analytics data is never linked to your straws or Drive data.
+      </p>
+
+      <h2>4. No accounts or personal data collected by the developer</h2>
+      <p>There is no sign-up, and the App does not ask for your name, e-mail or other personal information.</p>
+
+      <h2>5. Children</h2>
+      <p>The App is not directed at children under 13 and does not knowingly collect data from them.</p>
+
+      <h2>6. Changes</h2>
+      <p>
+        Updates are reflected in the "Last updated" date; material changes are announced in the App's "What's new"
+        dialog.
+      </p>
+
+      <h2>7. Contact</h2>
+      <p>
+        [Name / project] — [contact e-mail]<br />
+        Source code: <a href="https://github.com/crescendoCat/little-straw-drawer">github.com/crescendoCat/little-straw-drawer</a>
+      </p>
+
+      <hr />
+
+      <section id="zh" lang="zh-Hant">
+        <h1>隱私權政策 — Mi Mi Draw Machine</h1>
+        <p class="meta">最後更新:2026-09-19。本中文版僅供參考,如有歧義以英文版為準。</p>
+
+        <p>Mi Mi Draw Machine(以下稱「本 App」)是一個免費的網頁抽籤工具。本頁說明本 App 會處理哪些資料,以及處理方式。</p>
+
+        <h2>1. 儲存在你裝置上的資料</h2>
+        <p>你的籤、預設集、抽籤紀錄與設定只儲存在瀏覽器的 local storage。除非你選擇備份到 Google Drive(第 2 節),資料不會離開你的裝置。清除網站資料即會刪除它們。</p>
+
+        <h2>2. Google Drive 備份(選用)</h2>
+        <p>當你點擊「Link Google Drive」,本 App 會請求 <code>https://www.googleapis.com/auth/drive.appdata</code> 權限。此權限只能存取你自己 Google Drive 中一個隱藏的、專屬於本 App 的資料夾;本 App 無法看見或修改任何其他檔案。</p>
+        <ul>
+          <li><strong>儲存內容:</strong>單一檔案 <code>little-straw-drawer.json</code>,內含你的籤、預設集、抽籤紀錄與設定。</li>
+          <li><strong>儲存時機:</strong>只在你按下「Save to Drive」「Restore from Drive」或在首次連結對話框中做出選擇時。沒有自動同步。</li>
+          <li><strong>方式:</strong>你的瀏覽器直接與 Google 溝通。本 App 沒有伺服器;開發者不會接收、儲存或看到你的資料或 Google 帳號資訊。</li>
+          <li><strong>存取權杖:</strong>只保存在瀏覽器記憶體中,約一小時後失效。</li>
+          <li><strong>解除連結:</strong>「Unlink Google Drive」會撤銷權杖並忘記此裝置的連結。備份檔仍留在你的 Drive 中,直到你在 Google Drive → 設定 → 管理應用程式 刪除,或在 <a href="https://myaccount.google.com/permissions">https://myaccount.google.com/permissions</a> 撤銷存取權。</li>
+        </ul>
+        <p>本 App 對自 Google API 取得之資訊的使用,遵守 <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API 服務使用者資料政策</a>,包含其「有限使用」規範。Google 使用者資料絕不會被出售、用於廣告或由人工閱讀。</p>
+
+        <h2>3. 流量分析</h2>
+        <p>本網站載入 Google Analytics 與 Cloudflare Web Analytics,收集彙整後的技術性資料(頁面瀏覽數、大致地區、瀏覽器、裝置)。Cloudflare Web Analytics 不使用 cookie;Google Analytics 可能使用,且可在瀏覽器中封鎖。分析資料絕不會與你的籤或 Drive 資料連結。</p>
+
+        <h2>4. 開發者不收集帳號或個人資料</h2>
+        <p>本 App 沒有註冊機制,也不會詢問你的姓名、電子郵件或其他個人資訊。</p>
+
+        <h2>5. 兒童</h2>
+        <p>本 App 並非針對 13 歲以下兒童設計,亦不會在知情的情況下收集其資料。</p>
+
+        <h2>6. 政策變更</h2>
+        <p>更新會反映在「最後更新」日期;重大變更會在本 App 的「What's new」對話框中公告。</p>
+
+        <h2>7. 聯絡方式</h2>
+        <p>[姓名 / 專案名稱] — [聯絡電子郵件]<br />原始碼:<a href="https://github.com/crescendoCat/little-straw-drawer">github.com/crescendoCat/little-straw-drawer</a></p>
+      </section>
+    </main>
+  </body>
+</html>

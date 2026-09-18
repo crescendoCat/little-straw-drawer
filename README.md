@@ -69,6 +69,11 @@ it from Google Drive → Settings → *Manage apps*.
    `https://www.googleapis.com/auth/drive.appdata`. This scope is
    non-sensitive, so publishing the app does not require a Google review.
    While the app is in *Testing* mode only the listed test users can link.
+   Publishing requires a privacy policy and terms of service on the same
+   domain as the homepage: use `https://<your-domain>/privacy.html` and
+   `https://<your-domain>/terms.html` (sources in `public/`, linked from the
+   page footer and the Settings dialog). Fill in the contact placeholders
+   before going live.
 3. Create an **OAuth client ID** of type *Web application*. Under
    *Authorized JavaScript origins* add `http://localhost:3000` and the
    production origin(s). No redirect URIs are needed for the token flow.
