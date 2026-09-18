@@ -1,28 +1,14 @@
-import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
-import strawReducer from '../features/straw/strawSlice';
-import settingsReducer from '../features/settings/slice';
-import tutorialReducer from '../features/tutorial/tutorialSlice';
-import whatsNewReducer from '../features/whatsNew/whatsNewSlice';
+import { createAppStore } from '../app/store';
 
 /**
- * Build an in-memory store with the same reducers as the app but without
- * the localStorage persistence middleware, so tests stay isolated.
- * The serializable check is disabled to match the app store, whose
- * custom middleware list replaces the RTK defaults.
+ * Build an in-memory store with the app's real reducers and middleware but
+ * without localStorage persistence, so tests stay isolated. `preloadedState`
+ * is merged per slice by Redux: pass a whole slice object to override it.
  */
 export function makeStore(preloadedState) {
-  return configureStore({
-    reducer: {
-      straw: strawReducer,
-      settings: settingsReducer,
-      tutorial: tutorialReducer,
-      whatsNew: whatsNewReducer,
-    },
-    preloadedState,
-    middleware: (getDefault) => getDefault({ serializableCheck: false }),
-  });
+  return createAppStore({ persist: false, preloadedState });
 }
 
 export function renderWithStore(ui, { preloadedState, store = makeStore(preloadedState), ...options } = {}) {
