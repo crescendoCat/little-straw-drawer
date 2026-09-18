@@ -11,9 +11,11 @@ import {
 } from '../features/straw/strawSlice';
 import { startTutorial } from '../features/tutorial/tutorialSlice';
 import { openSettings } from '../features/settings/slice';
+import { resetWhatsNew } from '../features/whatsNew/whatsNewSlice';
 import { 
   FaTrashAlt, 
 } from 'react-icons/fa';
+import { FaGear } from 'react-icons/fa6';
 import {
   Container,
   Row, 
@@ -79,10 +81,19 @@ function Menu(props) {
           }}>
             Help
           </Button>
-          <Button variant="link" onClick={() => {
-            dispatch(openSettings())
+          <Button variant="link" id="btn-whats-new" onClick={() => {
+            dispatch(resetWhatsNew())
           }}>
-            Settings
+            What's new
+          </Button>
+        </Col>
+        <Col xs="auto" className="px-1 ms-auto">
+          <Button variant="link" id="btn-settings" className="btn-icon-settings"
+            aria-label="Settings" title="Settings"
+            onClick={() => {
+              dispatch(openSettings())
+            }}>
+            <FaGear aria-hidden="true" size={20} />
           </Button>
         </Col>
       </Row>
