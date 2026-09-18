@@ -16,6 +16,7 @@ import {
   FaTrashAlt, 
 } from 'react-icons/fa';
 import { FaGear } from 'react-icons/fa6';
+import CloudStatus from './CloudStatus';
 import {
   Container,
   Row, 
@@ -87,7 +88,8 @@ function Menu(props) {
             What's new
           </Button>
         </Col>
-        <Col xs="auto" className="px-1 ms-auto">
+        <Col xs="auto" className="px-1 ms-auto d-flex align-items-center">
+          <CloudStatus />
           <Button variant="link" id="btn-settings" className="btn-icon-settings"
             aria-label="Settings" title="Settings"
             onClick={() => {
