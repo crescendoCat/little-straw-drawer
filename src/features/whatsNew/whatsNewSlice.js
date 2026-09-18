@@ -4,9 +4,14 @@ import { createSlice } from '@reduxjs/toolkit';
  * Bump this whenever the notes below change so returning users see the
  * modal once more. Any string works; a date keeps it easy to reason about.
  */
-export const WHATS_NEW_VERSION = '2026-09';
+export const WHATS_NEW_VERSION = '2026-09-19';
 
 export const WHATS_NEW_NOTES = [
+  {
+    title: 'Back up to Google Drive',
+    description:
+      'Tap the cloud icon next to the settings gear to link your Google Drive, then save or restore your straws, presets, history and settings on any device.',
+  },
   {
     title: 'New color picker',
     description: 'Tap the palette icon on a straw to pick from ten swatches or type any hex color.',
