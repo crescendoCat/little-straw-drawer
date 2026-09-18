@@ -6,17 +6,21 @@ import {
   markWhatsNewSeen,
   selectShouldShowWhatsNew,
 } from '../features/whatsNew/whatsNewSlice';
-import { startTutorial } from '../features/tutorial/tutorialSlice';
+import { startTutorial, endTutorial } from '../features/tutorial/tutorialSlice';
 
 /**
- * Shown once per WHATS_NEW_VERSION. "OK" just dismisses; "Show Tutorial"
- * dismisses and launches the guided tour.
+ * Shown once per WHATS_NEW_VERSION. "OK" dismisses and makes sure the
+ * tutorial stays closed (a stale "show" may be persisted in localStorage);
+ * "Show Tutorial" dismisses and launches the guided tour.
  */
 export default function WhatsNew() {
   const dispatch = useDispatch();
   const show = useSelector(selectShouldShowWhatsNew);
 
-  const dismiss = () => dispatch(markWhatsNewSeen());
+  const dismiss = () => {
+    dispatch(markWhatsNewSeen());
+    dispatch(endTutorial());
+  };
   const showTutorial = () => {
     dispatch(markWhatsNewSeen());
     dispatch(startTutorial());

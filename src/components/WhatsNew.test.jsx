@@ -2,6 +2,7 @@ import { screen, fireEvent } from '@testing-library/react';
 import WhatsNew from './WhatsNew';
 import { renderWithStore } from '../test/renderWithStore';
 import { WHATS_NEW_VERSION, WHATS_NEW_NOTES } from '../features/whatsNew/whatsNewSlice';
+import { tutorialDefault } from '../features/tutorial/tutorialSlice';
 
 describe('WhatsNew', () => {
   test('shows the notes for a first-time user', () => {
@@ -20,8 +21,11 @@ describe('WhatsNew', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  test('OK marks the version as seen without starting the tutorial', () => {
-    const { store } = renderWithStore(<WhatsNew />);
+  test('OK marks the version as seen and forces the tutorial closed', () => {
+    const { store } = renderWithStore(<WhatsNew />, {
+      // simulate a stale "show" persisted from an older version of the app
+      preloadedState: { tutorial: { ...tutorialDefault, showTutorial: 'show' } },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'OK' }));
     expect(store.getState().whatsNew.seenVersion).toBe(WHATS_NEW_VERSION);
     expect(store.getState().tutorial.showTutorial).toBe('hide');

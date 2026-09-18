@@ -16,6 +16,7 @@ import {
 } from './features/straw/strawSlice';
 import Tutorial from "./components/Tutorial";
 import WhatsNew from "./components/WhatsNew";
+import { selectShouldShowWhatsNew } from "./features/whatsNew/whatsNewSlice";
 import Settings from "./components/Settings";
 import Animation from "./components/Animation";
 
@@ -42,6 +43,7 @@ function App() {
   const history = useSelector((state) => state.straw.history);
   const settings = useSelector((state) => state.settings);
   const showTutorial = useSelector(state => state.tutorial.showTutorial)
+  const whatsNewOpen = useSelector(selectShouldShowWhatsNew)
   const shareLink = window.location.href;
   const draw = useCallback(() => {
     let drawableStraws = [...straws];
@@ -195,7 +197,8 @@ function App() {
     <Settings />
     <Animation />
     <WhatsNew />
-    <Tutorial active={showTutorial === "show" ? true: false}/>
+    {/* never run the tutorial underneath the What's New modal */}
+    <Tutorial active={showTutorial === "show" && !whatsNewOpen}/>
   
   </>
   );
