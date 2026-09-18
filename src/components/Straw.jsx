@@ -4,7 +4,7 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import { addStraw, addStraws, updateStraw, removeStraw } from '../features/straw/strawSlice';
 import { useState, useEffect, useRef } from 'react';
 import { FaPlus, FaTrashAlt, FaPalette } from "react-icons/fa"
-import { TwitterPicker } from "react-color";
+import ColorPicker, { DEFAULT_SWATCHES } from "./ColorPicker";
 import { rgbToHsl, hslToRgb, hexStr2RgbObj } from "../utils";
 
 import "./straw.scss";
@@ -26,8 +26,7 @@ export const Straw = (props) => {
   }
 
   const randomColorObj = () => {
-    let array = ['#FF6900', '#FCB900', '#7BDCB5', '#00D084', '#8ED1FC', '#0693E3', '#ABB8C3', '#EB144C', '#F78DA7', '#9900EF']
-    let color = array[Math.floor(Math.random() * array.length)];
+    let color = DEFAULT_SWATCHES[Math.floor(Math.random() * DEFAULT_SWATCHES.length)];
     return hexStr2RgbObj(color);
   }
 
@@ -54,16 +53,12 @@ export const Straw = (props) => {
     setDisplayColorPicker(false)
   }
 
-  const handleColorChange = (color, event) => {
-    if(event.type === "click") {
-      event.stopPropagation();
-    }
-    dispatch(updateStraw({...props.straw, rgb: color.rgb}))
+  const handleColorChange = (rgb) => {
+    dispatch(updateStraw({...props.straw, rgb}))
   }
 
-  const handleColorChangeComplete = (color, event) => {
+  const handleColorSelect = () => {
     setDisplayColorPicker(false);
-    dispatch(updateStraw({...props.straw, rgb: color.rgb}))
   }
 
   const handlePick = event => {
@@ -139,10 +134,10 @@ export const Straw = (props) => {
         { displayColorPicker 
           ? <div style={ popover } onClick={e => e.stopPropagation()}>
               <div style={ cover } onClick={ handleClose }/>
-              <TwitterPicker 
-                triangle="top-right" 
+              <ColorPicker
+                color={ c }
                 onChange={ handleColorChange }
-                onChangeComplete={ handleColorChangeComplete }/>
+                onSelect={ handleColorSelect }/>
             </div> 
           : null
         }
@@ -183,8 +178,7 @@ const StrawList = (props) => {
   }
 
   const randomColorObj = () => {
-    let array = ['#FF6900', '#FCB900', '#7BDCB5', '#00D084', '#8ED1FC', '#0693E3', '#ABB8C3', '#EB144C', '#F78DA7', '#9900EF']
-    let color = array[Math.floor(Math.random() * array.length)];
+    let color = DEFAULT_SWATCHES[Math.floor(Math.random() * DEFAULT_SWATCHES.length)];
     return hexStr2RgbObj(color);
   }
 

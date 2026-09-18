@@ -13,7 +13,7 @@ import {
 } from "react-bootstrap"
 import { useSelector, useDispatch } from "react-redux";
 import { next, previous, endTutorial } from "../features/tutorial/tutorialSlice";
-import { useSpring, animated, useTransition, config } from 'react-spring'
+import { useSpring, animated, useTransition, config } from '@react-spring/web'
 
 const padding = 10;
 

@@ -5,7 +5,6 @@ import {
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaTrashAlt } from 'react-icons/fa';
-import { CSSTransitionGroup } from 'react-transition-group';
 import { clearHistory } from '../features/straw/strawSlice';
 import {
   CSSTransition,

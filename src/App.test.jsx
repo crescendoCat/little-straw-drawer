@@ -3,7 +3,7 @@ import App from './App';
 import { renderWithStore } from './test/renderWithStore';
 
 // @lucky-canvas/react draws on a <canvas>, which jsdom does not implement.
-jest.mock('@lucky-canvas/react', () => ({
+vi.mock('@lucky-canvas/react', () => ({
   LuckyWheel: () => <div data-testid="lucky-wheel" />,
 }));
 

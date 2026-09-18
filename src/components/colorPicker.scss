@@ -1,0 +1,71 @@
+.color-picker {
+  width: 276px;
+  padding: 15px 9px 9px 15px;
+  background: #fff;
+  border: 0 solid rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  position: relative;
+
+  // top-right triangle, like TwitterPicker's triangle="top-right"
+  &::before {
+    content: '';
+    position: absolute;
+    top: -11px;
+    right: 12px;
+    border-width: 0 9px 10px 9px;
+    border-style: solid;
+    border-color: transparent transparent #fff transparent;
+  }
+}
+
+.color-picker-swatches {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.color-picker-swatch {
+  width: 30px;
+  height: 30px;
+  margin: 0 6px 6px 0;
+  border: 0;
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+
+  &.active,
+  &:focus-visible {
+    outline: 2px solid #333;
+    outline-offset: 1px;
+  }
+}
+
+.color-picker-input {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+
+  .color-picker-hash {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: #f0f0f0;
+    color: #98a1a4;
+    border-radius: 4px 0 0 4px;
+  }
+
+  input {
+    width: 100px;
+    height: 30px;
+    font-size: 14px;
+    color: #666;
+    border: 0;
+    outline: none;
+    box-shadow: inset 0 0 0 1px #f0f0f0;
+    border-radius: 0 4px 4px 0;
+    padding: 0 7px;
+    text-transform: uppercase;
+  }
+}

@@ -1,6 +1,8 @@
-# Getting Started with Create React App
+# Little Straw Drawer (Mi Mi Draw Machine)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A tiny web app for drawing straws and keeping track of the results. State is
+persisted in `localStorage`. Built with React 18, Redux Toolkit, Bootstrap and
+[Vite](https://vite.dev/); tests run on [Vitest](https://vitest.dev/).
 
 ## Requirements
 
@@ -11,18 +13,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run dev` (alias: `npm start`)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Runs the app in development mode with hot module replacement.Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches Vitest in watch mode.
 
 ### `npm run test:ci`
 
@@ -30,50 +27,31 @@ Runs the whole test suite once without watch mode (for CI or a quick local check
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Builds the app for production to the `build` folder.The output is minified and file names include content hashes.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### `npm run preview`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Serves the production build locally so you can check it before deploying.
 
-### `npm run eject`
+## Project layout
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+index.html                 Vite entry HTML (analytics tags live here)
+public/                    Static assets copied verbatim to the build
+src/index.jsx              App bootstrap (Redux Provider, StrictMode)
+src/App.jsx                Main screen and draw logic
+src/components/            UI components (Straw list, results, menu, settings, tutorial, ColorPicker)
+src/features/              Redux slices: straw, settings, tutorial
+src/app/store.js           Store setup with localStorage persistence
+src/utils.js               Color helpers and hooks
+src/test/renderWithStore   Test helper that renders with a fresh in-memory store
+vite.config.js             Vite + Vitest configuration
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Migration notes (from Create React App)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `react-scripts` was replaced by Vite 8 and Vitest 5. Files containing JSX use the `.jsx` extension.
+- `public/index.html` moved to the project root; `%PUBLIC_URL%` became plain absolute paths.
+- `moment` (unused) and `react-color` were dropped. Color picking now uses a small
+  `ColorPicker` component built on [`react-colorful`](https://github.com/omgovich/react-colorful).
+- `react-spring` was narrowed to `@react-spring/web`.
