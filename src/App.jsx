@@ -27,14 +27,12 @@ import {
 
 import {
   FacebookShareButton,
-  FacebookIcon,
   LineShareButton,
-  LineIcon,
   TelegramShareButton,
-  TelegramIcon,
-  TwitterShareButton,
-  TwitterIcon
+  TwitterShareButton
 } from 'react-share'
+import { FaFacebookF, FaLine, FaTelegram, FaXTwitter } from 'react-icons/fa6'
+import SocialIcon from './components/SocialIcon'
 
 
 function App() {
@@ -155,20 +153,20 @@ function App() {
         <Col xs={12} sm={"auto"} lg={3} xl={6} className="d-flex justify-content-end">
           <div className="d-none d-xl-block me-2">Share this app:</div>
           <Share title={"Mi Mi Draw Machine"} text={"Mi Mi Draw Machine: wanna draw some straws? A simple, easy and fast solution you should try!\n"}/>
-          <FacebookShareButton 
+          <FacebookShareButton
             url={shareLink}
-            quote={"Mi Mi Draw Machine"}
-            hashtag={"#draw-machine"}>
-            <FacebookIcon size={32} round />
+            hashtag={"#draw-machine"}
+            aria-label="Share on Facebook">
+            <SocialIcon icon={FaFacebookF} bgColor="#0965FE" />
           </FacebookShareButton>
-          <LineShareButton url={shareLink}>
-            <LineIcon size={32} round />
+          <LineShareButton url={shareLink} aria-label="Share on LINE">
+            <SocialIcon icon={FaLine} bgColor="#00B800" />
           </LineShareButton>
-          <TelegramShareButton url={shareLink}>
-            <TelegramIcon size={32} round />
+          <TelegramShareButton url={shareLink} aria-label="Share on Telegram">
+            <SocialIcon icon={FaTelegram} bgColor="#37AEE2" />
           </TelegramShareButton>
-          <TwitterShareButton url={shareLink}>
-            <TwitterIcon size={32} round />
+          <TwitterShareButton url={shareLink} aria-label="Share on X">
+            <SocialIcon icon={FaXTwitter} bgColor="#000000" />
           </TwitterShareButton>
         </Col>
       </Row>

@@ -20,4 +20,11 @@ describe('App', () => {
     expect(document.getElementById('drawing-result-card')).toBeInTheDocument();
     expect(screen.getByText(/No results here/)).toBeInTheDocument();
   });
+
+  test('renders the social share buttons', () => {
+    renderWithStore(<App />);
+    for (const name of ['Share on Facebook', 'Share on LINE', 'Share on Telegram', 'Share on X']) {
+      expect(screen.getByRole('button', { name })).toBeInTheDocument();
+    }
+  });
 });
